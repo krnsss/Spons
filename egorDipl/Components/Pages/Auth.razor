@@ -1,0 +1,453 @@
+﻿@page "/auth"
+@inject NavigationManager NavigationManager
+@using egorDipl.Data
+@using egorDipl.Data.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject SponsorsDbContext DbContext
+
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        input,
+        select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #007bff;
+            background-color: #333;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+            .input-container input {
+                width: 80%;
+            }
+
+        .generate-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 40px;
+            height: 40px;
+            margin-left: 10px;
+        }
+
+            .generate-btn:hover {
+                background-color: #0056b3;
+                transform: scale(1.1);
+            }
+
+            .generate-btn i {
+                font-size: 1.2rem;
+            }
+
+        button.primary {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+            button.primary:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+
+        button.cancel {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+            button.cancel:hover {
+                background-color: #c82333;
+                transform: scale(1.05);
+            }
+
+        .register-link {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+            .back-button:hover {
+                color: #007bff;
+            }
+
+        .input-error {
+            border-color: red;
+        }
+
+        .error-text {
+            color: red;
+            font-size: 0.8rem;
+            text-align: left;
+            margin-top: 4px;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+</head>
+
+<button class="back-button" @onclick="GoBack">← Назад</button>
+
+<div class="auth-container">
+    @if (!showRegistration)
+    {
+        <h3 style="font-family: Nozhik; font-size: 40px;">Авторизация</h3>
+        <label>UniCode</label>
+        <input @bind="loginModel.UniCode" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="@GetInputClass(loginModel.UniCode)" />
+        @if (submitLogin && string.IsNullOrEmpty(loginModel.UniCode))
+        {
+            <div class="error-text">UniCode может быть только 6-ти значным</div>
+        }
+
+        <label>Пароль</label>
+        <input type="password" @bind="loginModel.Password" maxlength="50" oninput="this.value=this.value.replace(/\s/g,'')" class="@GetInputClass(loginModel.Password)" />
+        @if (submitLogin && string.IsNullOrEmpty(loginModel.Password))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <button class="primary" @onclick="Login">Войти</button>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-message">@errorMessage</div>
+        }
+
+        <span class="register-link" @onclick="ShowRegistration">Нет аккаунта? Зарегистрироваться</span>
+    }
+    else
+    {
+        <h3 style="font-family: Nozhik; font-size: 40px;">Регистрация</h3>
+
+        <label>Фамилия</label>
+        <input @bind="registerModel.Surname" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(registerModel.Surname)" />
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.Surname))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <label>Имя</label>
+        <input @bind="registerModel.Name" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(registerModel.Name)" />
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.Name))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <label>Отчество</label>
+        <input @bind="registerModel.Patronymic" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(registerModel.Patronymic)" />
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.Patronymic))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <label>Должность</label>
+        <input @bind="registerModel.Post" maxlength="100"
+               oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё\s-]/g,'').replace(/^(?=-)/g, '').replace(/\s+/g, ' ')"
+               class="@GetInputClass(registerModel.Post)" />
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.Post))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <label>Роль</label>
+        <select @bind="registerModel.RoleId" class="@GetInputClass(registerModel.RoleId)">
+            <option value="1">Администратор</option>
+            <option value="2">Пользователь</option>
+            <option value="3">Владелец</option>
+        </select>
+
+        <label>Компания</label>
+        <select @bind="selectedCompany.CompanyId" class="@GetInputClass(selectedCompany.CompanyId)">
+            <option value="">Выберите компанию</option>
+            @foreach (var company in companies)
+            {
+                <option value="@company.Id">@company.Name</option>
+            }
+        </select>
+        @if (submitRegister && selectedCompany.CompanyId == 0)
+        {
+            <div class="error-text">Выберите компанию</div>
+        }
+
+        <label>UniCode</label>
+        <div class="input-container">
+            <input @bind="registerModel.UniCode" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')" readonly class="@GetInputClass(registerModel.UniCode)" />
+            <button class="generate-btn" @onclick="GenerateUniCode">
+                <i class="fas fa-random"></i>
+            </button>
+        </div>
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.UniCode))
+        {
+            <div class="error-text">Сгенерируйте UniCode</div>
+        }
+
+        <label>Пароль</label>
+        <input type="password" @bind="registerModel.Password" maxlength="50" oninput="this.value=this.value.replace(/\s/g,'')" class="@GetInputClass(registerModel.Password)" />
+        @if (submitRegister && string.IsNullOrEmpty(registerModel.Password))
+        {
+            <div class="error-text">Заполните поле</div>
+        }
+
+        <button class="primary" @onclick="Register">Зарегистрироваться</button>
+        <button class="cancel" @onclick="HideRegistration">Отмена</button>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-message">@errorMessage</div>
+        }
+    }
+</div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string errorMessage = string.Empty;
+    private RegisterModel registerModel = new();
+    private bool showRegistration = false;
+    private SelectedCompany selectedCompany = new SelectedCompany();
+    private List<Company> companies = new List<Company>();
+
+    private bool submitLogin = false;
+    private bool submitRegister = false;
+
+    public class ErrorResponse
+    {
+        public string Message { get; set; }
+        public Dictionary<string, List<string>> Errors { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
+    }
+
+    private async Task Login()
+    {
+        submitLogin = true;
+        errorMessage = string.Empty;
+
+        if (string.IsNullOrEmpty(loginModel.UniCode) || string.IsNullOrEmpty(loginModel.Password))
+        {
+            errorMessage = "Заполните все поля.";
+            return;
+        }
+
+        if (loginModel.UniCode.Length != 6)
+        {
+            errorMessage = "UniCode должен быть 6-значным.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/User/Login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/profile");
+            }
+            else
+            {
+                errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = "Неверный UniCode или пароль.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка при авторизации: {ex.Message}";
+        }
+    }
+
+    private async Task Register()
+    {
+        submitRegister = true;
+        errorMessage = string.Empty;
+
+        registerModel.CompanyId = selectedCompany.CompanyId;
+
+        if (string.IsNullOrEmpty(registerModel.Surname) ||
+            string.IsNullOrEmpty(registerModel.Name) ||
+            string.IsNullOrEmpty(registerModel.Patronymic) ||
+            string.IsNullOrEmpty(registerModel.Post) ||
+            registerModel.CompanyId == 0 ||
+            string.IsNullOrEmpty(registerModel.UniCode) ||
+            string.IsNullOrEmpty(registerModel.Password))
+        {
+            errorMessage = "Заполните все обязательные поля.";
+            return;
+        }
+
+        if (registerModel.UniCode.Length != 6)
+        {
+            errorMessage = "UniCode должен быть 6-значным.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/user", registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                showRegistration = false;
+                registerModel = new RegisterModel();
+                selectedCompany = new SelectedCompany();
+                submitRegister = false;
+                errorMessage = string.Empty;
+            }
+            else
+            {
+                try
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    if (!string.IsNullOrEmpty(errorResponse?.Message))
+                    {
+                        errorMessage = errorResponse.Message;
+                    }
+                    else
+                    {
+                        var errorText = await response.Content.ReadAsStringAsync();
+                        errorMessage = !string.IsNullOrWhiteSpace(errorText)
+                            ? errorText
+                            : $"Ошибка регистрации (код: {response.StatusCode})";
+                    }
+                }
+                catch
+                {
+                    errorMessage = $"Ошибка регистрации (код: {response.StatusCode})";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка при регистрации: {ex.Message}";
+        }
+    }
+
+    private void ShowRegistration()
+    {
+        showRegistration = true;
+        errorMessage = string.Empty;
+        registerModel = new RegisterModel();
+        selectedCompany = new SelectedCompany();
+        submitRegister = false;
+    }
+
+    private void HideRegistration()
+    {
+        showRegistration = false;
+        errorMessage = string.Empty;
+    }
+
+    private void GenerateUniCode()
+    {
+        var random = new Random();
+        registerModel.UniCode = random.Next(100000, 999999).ToString();
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private string GetInputClass(object value)
+    {
+        if (value == null) return "input-error";
+        if (value is int intValue && intValue == 0) return "input-error";
+        return string.IsNullOrEmpty(value.ToString()) ? "input-error" : string.Empty;
+    }
+
+    public class LoginModel
+    {
+        public string UniCode { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterModel
+    {
+        public string Surname { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Patronymic { get; set; } = string.Empty;
+        public string Post { get; set; } = string.Empty;
+        public int RoleId { get; set; } = 2;
+        public int CompanyId { get; set; }
+        public string UniCode { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class SelectedCompany
+    {
+        public int CompanyId { get; set; }
+    }
+}

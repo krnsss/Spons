@@ -1,0 +1,425 @@
+﻿@page "/users"
+@using egorDipl.Data.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        html {
+            background-color: #000;
+            color: #fff;
+        }
+
+        a, .btn-link {
+            color: #007bff;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #0056b3;
+        }
+
+        .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+            box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #007bff;
+        }
+
+        .content {
+            padding-top: 1.1rem;
+        }
+
+        h1:focus {
+            outline: none;
+        }
+
+        .valid.modified:not([type=checkbox]) {
+            outline: 1px solid #26b050;
+        }
+
+        .invalid {
+            outline: 1px solid #ff0000;
+        }
+
+        .validation-message {
+            color: #ff0000;
+        }
+
+        .blazor-error-boundary {
+            background: #b32121;
+            padding: 1rem;
+            color: white;
+        }
+
+            .blazor-error-boundary::after {
+                content: "An error has occurred."
+            }
+
+        .darker-border-checkbox.form-check-input {
+            border-color: #007bff;
+        }
+
+        .form-floating > .form-control-plaintext::placeholder,
+        .form-floating > .form-control::placeholder {
+            color: #ccc;
+            text-align: end;
+        }
+
+        .form-floating > .form-control-plaintext:focus::placeholder,
+        .form-floating > .form-control:focus::placeholder {
+            text-align: start;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tbody tr {
+            background-color: #222;
+            border-bottom: 1px solid #333;
+        }
+
+            tbody tr:hover {
+                background-color: #333;
+            }
+
+        th {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .edit, .delete {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .edit {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .edit:hover {
+                background-color: #218838;
+            }
+
+        .delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .delete:hover {
+                background-color: #c82333;
+            }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+            .modal-content h3 {
+                margin-top: 0;
+            }
+
+        .modal input,
+        .modal select,
+        .modal button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #007bff;
+            background-color: #222;
+            color: white;
+        }
+
+        .modal button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+            .modal button:hover {
+                background-color: #0056b3;
+            }
+
+        .cancel {
+            background-color: #6c757d;
+        }
+
+            .cancel:hover {
+                background-color: #5a6268;
+            }
+
+        button.primary {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            button.primary:hover {
+                background-color: #218838;
+            }
+
+        h3 {
+            text-align: center;
+        }
+
+        .blazor-error-boundary {
+            display: none;
+        }
+    </style>
+</head>
+
+<h3>Пользователи</h3>
+
+<button class="primary" @onclick="AddUser">Добавить пользователя</button>
+
+@if (users == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Должность</th>
+                <th>Роль</th>
+                <th>Компания</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Surname</td>
+                    <td>@user.Name</td>
+                    <td>@user.Patronymic</td>
+                    <td>@user.Post</td>
+                    <td>@GetRoleName(user.RoleId)</td>
+                    <td>@GetCompanyName(user.CompanyId)</td>
+                    <td>
+                        <button class="edit" @onclick="() => EditUser(user.Id)">Редактировать</button>
+                        <button class="delete" @onclick="() => DeleteUser(user.Id)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@if (showAddEditDialog)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h3>@(selectedUser.Id == 0 ? "Добавить пользователя" : "Редактировать пользователя")</h3>
+
+            <label>Фамилия</label>
+            <input @bind="selectedUser.Surname" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(selectedUser.Surname)" />
+
+            <label>Имя</label>
+            <input @bind="selectedUser.Name" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(selectedUser.Name)" />
+
+            <label>Отчество</label>
+            <input @bind="selectedUser.Patronymic" maxlength="50" oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё]/g,'')" class="@GetInputClass(selectedUser.Patronymic)" />
+
+            <label>Должность</label>
+            <input @bind="selectedUser.Post" maxlength="100"
+                   oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё\s-]/g,'').replace(/^(?=-)/g, '').replace(/\s+/g, ' ')"
+                   class="@GetInputClass(selectedUser.Post)" />
+
+            <label>Роль</label>
+            <select @bind="selectedUser.RoleId" class="@GetInputClass(selectedUser.RoleId)">
+                <option value="">Выберите роль</option>
+                @foreach (var role in roles)
+                {
+                    <option value="@role.Id">@role.Name</option>
+                }
+            </select>
+
+            <label>Компания</label>
+            <select @bind="selectedUser.CompanyId" class="@GetInputClass(selectedUser.CompanyId)">
+                <option value="">Выберите компанию</option>
+                @foreach (var company in companies)
+                {
+                    <option value="@company.Id">@company.Name</option>
+                }
+            </select>
+
+            <label>UniCode</label>
+            <div class="input-container">
+                <input @bind="selectedUser.UniCode" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')" readonly class="@GetInputClass(selectedUser.UniCode)" />
+                <button class="generate-btn" @onclick="GenerateUniCode">
+                    <i class="fas fa-random"></i>
+                </button>
+            </div>
+            @if (submitRegister && string.IsNullOrEmpty(selectedUser.UniCode.ToString()))
+            {
+                <div class="error-text">Сгенерируйте UniCode</div>
+            }
+
+            <label>Пароль</label>
+            <input type="password" @bind="selectedUser.Password" maxlength="50" oninput="this.value=this.value.replace(/\s/g,'')" class="@GetInputClass(selectedUser.Password)" />
+            @if (submitRegister && string.IsNullOrEmpty(selectedUser.Password))
+            {
+                <div class="error-text">Заполните поле</div>
+            }
+
+            <button class="save" style="background-color: green;" @onclick="SaveUser">Сохранить</button>
+            <button class="cancel" @onclick="Cancel">Отмена</button>
+        </div>
+    </div>
+}
+
+@code {
+    private List<User> users = new();
+    private List<StaffRole> roles = new();
+    private List<Company> companies = new();
+    private User selectedUser = new();
+    private bool showAddEditDialog = false;
+
+    private bool submitRegister = false;
+
+    private string GetInputClass(object value)
+    {
+        if (value == null) return "input-error";
+        if (value is int intValue && intValue == 0) return "input-error";
+        return string.IsNullOrEmpty(value.ToString()) ? "input-error" : string.Empty;
+    }
+
+    private void GenerateUniCode()
+    {
+        var random = new Random();
+        selectedUser.UniCode = random.Next(100000, 999999);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+        await LoadRoles();
+        await LoadCompanies();
+    }
+
+    private async Task LoadUsers()
+    {
+        users = await Http.GetFromJsonAsync<List<User>>("api/User");
+    }
+
+    private async Task LoadRoles()
+    {
+        roles = await Http.GetFromJsonAsync<List<StaffRole>>("api/StaffRole");
+    }
+
+    private async Task LoadCompanies()
+    {
+        companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
+    }
+
+    private void AddUser()
+    {
+        selectedUser = new User();
+        showAddEditDialog = true;
+    }
+
+    private async Task EditUser(int id)
+    {
+        selectedUser = await Http.GetFromJsonAsync<User>($"api/User/{id}");
+        showAddEditDialog = true;
+    }
+
+    private async Task SaveUser()
+    {
+        HttpResponseMessage response;
+
+        if (selectedUser.Id == 0)
+        {
+            response = await Http.PostAsJsonAsync("api/User", selectedUser);
+        }
+        else
+        {
+            response = await Http.PutAsJsonAsync($"api/User/{selectedUser.Id}", selectedUser);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            showAddEditDialog = false;
+            await LoadUsers();
+        }
+    }
+
+    private async Task DeleteUser(int id)
+    {
+        await Http.DeleteAsync($"api/User/{id}");
+        await LoadUsers();
+    }
+
+    private void Cancel()
+    {
+        showAddEditDialog = false;
+    }
+
+    private string GetRoleName(int roleId)
+    {
+        var role = roles.FirstOrDefault(r => r.Id == roleId);
+        return role?.Name ?? "Не указано";
+    }
+
+    private string GetCompanyName(int? companyId)
+    {
+        var company = companies.FirstOrDefault(c => c.Id == companyId);
+        return company?.Name ?? "Не указано";
+    }
+}

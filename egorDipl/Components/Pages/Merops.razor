@@ -1,0 +1,422 @@
+﻿@page "/merops"
+@using egorDipl.Data.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        html {
+            background-color: #000;
+            color: #fff;
+        }
+
+        a, .btn-link {
+            color: #007bff;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #0056b3;
+        }
+
+        .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+            box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #007bff;
+        }
+
+        .content {
+            padding-top: 1.1rem;
+        }
+
+        h1:focus {
+            outline: none;
+        }
+
+        .valid.modified:not([type=checkbox]) {
+            outline: 1px solid #26b050;
+        }
+
+        .invalid {
+            outline: 1px solid #ff0000;
+        }
+
+        .validation-message {
+            color: #ff0000;
+        }
+
+        /* Таблица */
+        table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tbody tr {
+            background-color: #222;
+            border-bottom: 1px solid #333;
+        }
+
+            tbody tr:hover {
+                background-color: #333;
+            }
+
+        th {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* Кнопки в таблице */
+        .edit, .delete {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .edit {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .edit:hover {
+                background-color: #218838;
+            }
+
+        .delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .delete:hover {
+                background-color: #c82333;
+            }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+            .modal-content h3 {
+                margin-top: 0;
+            }
+
+        .modal input,
+        .modal select,
+        .modal button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #007bff;
+            background-color: #222;
+            color: white;
+        }
+
+        .modal button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+            .modal button:hover {
+                background-color: #0056b3;
+            }
+
+        .cancel {
+            background-color: #6c757d;
+        }
+
+            .cancel:hover {
+                background-color: #5a6268;
+            }
+
+        button.primary {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            button.primary:hover {
+                background-color: #218838;
+            }
+
+        h3 {
+            text-align: center;
+        }
+
+        .blazor-error-boundary {
+            display: none;
+        }
+    </style>
+</head>
+
+<h3>Мероприятия</h3>
+
+<button class="primary" @onclick="AddEvent">Добавить мероприятие</button>
+
+@if (showAddEditDialog)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h3>@(selectedEvent.Id == 0 ? "Добавить мероприятие" : "Редактировать мероприятие")</h3>
+
+            <label>Название</label>
+            <input id="eventName" @bind="selectedEvent.Name" maxlength="50" oninput="this.value=this.value.replace(/[^а-яА-Яa-zA-Z0-9 ()]/g,'').replace(/([ ()])\1+/g,'$1')" />
+            @if (submitClicked && string.IsNullOrEmpty(selectedEvent.Name))
+            {
+                <div class="validation-message" style="color: red;">Заполните поле</div>
+            }
+
+            <label>Описание</label>
+            <input id="eventDesc" @bind="selectedEvent.Description" maxlength="100" oninput="this.value=this.value.replace(/[^а-яА-Яa-zA-Z0-9 ()]/g,'').replace(/([ ()])\1+/g,'$1')" />
+            @if (submitClicked && string.IsNullOrEmpty(selectedEvent.Description))
+            {
+                <div class="validation-message" style="color: red;">Заполните поле</div>
+            }
+
+            <label>Организатор</label>
+            <select @bind="selectedEvent.OrganizerId" class="@GetFieldClass(selectedEvent.OrganizerId)">
+                <option value="">Выберите организатора</option>
+                @foreach (var company in companies)
+                {
+                    <option value="@company.Id">@company.Name</option>
+                }
+            </select>
+
+            <label>Спонсор:</label>
+            <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
+                <option value="">Выберите спонсора</option>
+                @foreach (var company in companies)
+                {
+                    <option value="@company.Id">@company.Name</option>
+                }
+            </select>
+
+            <label>Статус:</label>
+            <select @bind="selectedEvent.StatusId" class="@GetFieldClass(selectedEvent.StatusId)">
+                <option value="">Выберите статус</option>
+                @foreach (var status in statuses)
+                {
+                    <option value="@status.Id">@status.Name</option>
+                }
+            </select>
+
+            <label>Дата:</label>
+            <input id="eventDate" type="datetime-local" @bind="selectedEvent.Date" min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" max="2030-12-31T23:59" />
+            @if (submitClicked && selectedEvent.Date == default)
+            {
+                <div class="validation-message" style="color: red;">Заполните поле</div>
+            }
+            
+            <button class="save" @onclick="ValidateAndSave">Сохранить</button>
+            <button class="cancel" @onclick="Cancel">Отмена</button>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message" style="color: red;">@errorMessage</div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool submitClicked = false;
+    private string errorMessage = string.Empty;
+
+    private async void ValidateAndSave()
+    {
+        submitClicked = true;
+
+        await SaveEvent();
+    }
+
+    private string GetFieldClass(object fieldValue)
+    {
+        return submitClicked && string.IsNullOrEmpty(fieldValue?.ToString()) ? "invalid" : "";
+    }
+}
+
+@if (events == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Организатор</th>
+                <th>Спонсор</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var eventItem in events)
+            {
+                <tr>
+                    <td>@eventItem.Id</td>
+                    <td>@eventItem.Name</td>
+                    <td>@eventItem.Description</td>
+                    <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
+                    <td>@GetSponsorName((int)eventItem.SponsorId)</td>
+                    <td>@GetStatusName((int)eventItem.StatusId)</td>
+                    <td>@eventItem.Date.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
+                        <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Event> events = new();
+    private List<Company> companies = new();
+    private List<EventStatus> statuses = new();
+    private Event selectedEvent = new();
+    private bool showAddEditDialog = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+        await LoadCompanies();
+        await LoadStatuses();
+    }
+
+    private async Task LoadEvents()
+    {
+        events = await Http.GetFromJsonAsync<List<Event>>("api/Event");
+    }
+
+    private async Task LoadCompanies()
+    {
+        companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
+    }
+
+    private async Task LoadStatuses()
+    {
+        statuses = await Http.GetFromJsonAsync<List<EventStatus>>("api/EventStatus");
+    }
+
+    private string GetOrganizerName(int organizerId)
+    {
+        var organizer = companies.FirstOrDefault(c => c.Id == organizerId);
+        return organizer?.Name ?? "Неизвестно";
+    }
+
+    private string GetSponsorName(int sponsorId)
+    {
+        var sponsor = companies.FirstOrDefault(c => c.Id == sponsorId);
+        return sponsor?.Name ?? "Неизвестно";
+    }
+
+    private string GetStatusName(int statusId)
+    {
+        var status = statuses.FirstOrDefault(s => s.Id == statusId);
+        return status?.Name ?? "Неизвестно";
+    }
+
+    private void AddEvent()
+    {
+        selectedEvent = new Event();
+        showAddEditDialog = true;
+    }
+
+    private async Task EditEvent(int id)
+    {
+        selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
+        showAddEditDialog = true;
+    }
+
+    private async Task SaveEvent()
+    {
+        if (selectedEvent.Id == 0)
+        {
+            var response = await Http.PostAsJsonAsync("api/Event", selectedEvent);
+            if (response.IsSuccessStatusCode)
+            {
+                showAddEditDialog = false;
+                await LoadEvents();
+            }
+            else
+            {
+                Console.WriteLine("Ошибка при добавлении мероприятия");
+            }
+        }
+        else
+        {
+            var response = await Http.PutAsJsonAsync($"api/Event/{selectedEvent.Id}", selectedEvent);
+            if (response.IsSuccessStatusCode)
+            {
+                showAddEditDialog = false;
+                await LoadEvents();
+            }
+            else
+            {
+                Console.WriteLine("Ошибка при обновлении мероприятия");
+            }
+        }
+    }
+
+    private async Task DeleteEvent(int id)
+    {
+        await Http.DeleteAsync($"api/Event/{id}");
+        await LoadEvents();
+    }
+
+    private void Cancel()
+    {
+        showAddEditDialog = false;
+    }
+}

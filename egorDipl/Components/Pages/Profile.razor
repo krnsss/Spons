@@ -1,0 +1,169 @@
+﻿@page "/profile"
+@using egorDipl.Data.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .profile-section {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+        }
+
+            .profile-section h4 {
+                margin-top: 0;
+                color: #fff;
+            }
+
+            .profile-section p {
+                margin: 5px 0;
+                color: #bbb;
+            }
+
+            .profile-section strong {
+                color: #fff;
+            }
+
+        .button-container {
+            margin-top: 15px;
+        }
+
+        .primary-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+            .primary-btn:hover {
+                background-color: #218838;
+            }
+    </style>
+</head>
+
+<h3>Профиль пользователя</h3>
+
+@* @if (user == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{ *@
+    <div class="profile-container">
+        <div class="user-info">
+            <h4>Личные данные</h4>
+            @* <p><strong>Фамилия:</strong> @user.Surname</p>
+            <p><strong>Имя:</strong> @user.Name</p>
+            <p><strong>Отчество:</strong> @user.Patronymic</p>
+            <p><strong>Должность:</strong> @user.Post</p>
+            <p><strong>Роль:</strong> @(user.Role?.Name ?? "Нет роли")</p>
+            <p><strong>Уникальный код:</strong> @user.UniCode</p>
+            <button class="edit" @onclick="EditUser">Редактировать</button> *@
+            <p><strong>Фамилия:</strong>Карунас</p>
+            <p><strong>Имя:</strong>Егор</p>
+            <p><strong>Отчество:</strong>Артёмович</p>
+            <p><strong>Должность:</strong>Директор</p>
+            <p><strong>Роль:</strong>Владелец</p>
+            <p><strong>Уникальный код:</strong>777777</p>
+            <button class="edit" @onclick="EditUser">Редактировать</button>
+        </div>
+
+        @* @if (user.Company != null)
+        { *@
+            <div class="company-info">
+                <h4>Компания</h4>
+                <p><strong>Название:</strong>KIT++</p>
+                <p><strong>Адрес:</strong>Казань, ул. Б.Красная, д.55</p>
+                <p><strong>Число событий:</strong>789</p>
+                <p><strong>Отзывы:</strong>512</p>
+                <p><strong>Рейтинг:</strong>5.0</p>
+                <p><strong>Описание:</strong>Студсовет!</p>
+            </div>
+        @* }
+        else
+        {
+            <p>Компания не назначена.</p>
+        } *@
+    </div>
+@* } *@
+
+@if (showEditDialog)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h3>Редактировать профиль</h3>
+
+            <label>Фамилия:</label>
+            <input @bind="user.Surname" />
+
+            <label>Имя:</label>
+            <input @bind="user.Name" />
+
+            <label>Отчество:</label>
+            <input @bind="user.Patronymic" />
+
+            <label>Должность:</label>
+            <input @bind="user.Post" />
+
+            <button class="save" @onclick="SaveUser">Сохранить</button>
+            <button class="cancel" @onclick="Cancel">Отмена</button>
+        </div>
+    </div>
+}
+
+@code {
+    private User? user;
+    private bool showEditDialog = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // user = await Http.GetFromJsonAsync<User>("api/User/2");
+    }
+
+    private void EditUser()
+    {
+        showEditDialog = true;
+    }
+
+    private async Task SaveUser()
+    {
+        await Http.PutAsJsonAsync("api/User/me", user);
+        showEditDialog = false;
+    }
+
+    private void Cancel()
+    {
+        showEditDialog = false;
+    }
+}

@@ -1,0 +1,86 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .description {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+
+        .login-button {
+            margin-top: 40px;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background-color: #12426C;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+            .login-button:hover {
+                background-color: #0e3351;
+            }
+    </style>
+</head>
+
+<div class="home-container">
+    <div style="font-size: 300px; color: #12426C; font-family: Nozhik; margin-top: -100px;">SPONS</div>
+    <div id="changing-title" class="title">СОЗДАВАЙ!</div>
+    <div class="description">
+        Платформа для управления сотрудничеством организаторов и спонсоров массовых мероприятий.
+        Помогаем находить надежных партнеров и эффективно развивать event-сферу.
+    </div>
+
+    <button class="login-button" onclick="window.location.href='/auth'" style="font-family: Nozhik; font-size: 60px;">Войти</button>
+</div>
+
+<script>
+    const titles = ["СОЗДАВАЙ!", "ТВОРИ!", "ВОПЛОЩАЙ!"];
+    let index = 0;
+
+    function changeTitle() {
+        index = (index + 1) % titles.length;
+        const titleElement = document.getElementById("changing-title");
+        titleElement.style.opacity = "0";
+        setTimeout(() => {
+            titleElement.textContent = titles[index];
+            titleElement.style.opacity = "1";
+        }, 500);
+    }
+
+    setInterval(changeTitle, 2000);
+</script>
