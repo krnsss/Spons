@@ -16,9 +16,9 @@ namespace egorDipl.Data.Models
         public string? Patronymic { get; set; }
         public string? Post { get; set; }
         public int RoleId { get; set; }
-        public StaffRole? Role { get; set; }
+        public virtual StaffRole? Role { get; set; }
         public int? CompanyId { get; set; }
-        public Company? Company { get; set; }
+        public virtual Company? Company { get; set; }
 
         public int UniCode { get; set; }
         public string Password { get; set; }

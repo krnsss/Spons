@@ -14,12 +14,12 @@ namespace egorDipl.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? OrganizerId { get; set; }
-        public Company? Organizer { get; set; }
+        public virtual Company? Organizer { get; set; }
         public int? SponsorId { get; set; }
-        public Company? Sponsor { get; set; }
+        public virtual Company? Sponsor { get; set; }
         public int? EventId { get; set; }
-        public Event? Event { get; set; }
+        public virtual Event? Event { get; set; }
         public int? RequestId { get; set; }
-        public RequestForCooperation? Request { get; set; }
+        public virtual RequestForCooperation? Request { get; set; }
     }
 }

@@ -14,11 +14,11 @@ namespace egorDipl.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? SenderCompanyId { get; set; }
-        public Company? SenderCompany { get; set; }
+        public virtual Company? SenderCompany { get; set; }
         public string? TextLetter { get; set; }
         public int? EventId { get; set; }
-        public Event? Event { get; set; }
+        public virtual Event? Event { get; set; }
         public int? StatusId { get; set; }
-        public RequestStatus? Status { get; set; }
+        public virtual RequestStatus? Status { get; set; }
     }
 }
