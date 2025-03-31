@@ -10,147 +10,147 @@
 <head>
     <style>
         body {
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         }
 
         .auth-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            background-color: #222;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+        background-color: #222;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
         }
 
         input,
         select {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #007bff;
-            background-color: #333;
-            color: white;
-            font-size: 1rem;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #007bff;
+        background-color: #333;
+        color: white;
+        font-size: 1rem;
         }
 
         .input-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
         }
 
-            .input-container input {
-                width: 80%;
-            }
+        .input-container input {
+        width: 80%;
+        }
 
         .generate-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 8px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 40px;
-            height: 40px;
-            margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 40px;
+        height: 40px;
+        margin-left: 10px;
         }
 
-            .generate-btn:hover {
-                background-color: #0056b3;
-                transform: scale(1.1);
-            }
+        .generate-btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.1);
+        }
 
-            .generate-btn i {
-                font-size: 1.2rem;
-            }
+        .generate-btn i {
+        font-size: 1.2rem;
+        }
 
         button.primary {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
-            margin-bottom: 12px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        margin-bottom: 12px;
         }
 
-            button.primary:hover {
-                background-color: #218838;
-                transform: scale(1.05);
-            }
+        button.primary:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+        }
 
         button.cancel {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            width: 100%;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        width: 100%;
         }
 
-            button.cancel:hover {
-                background-color: #c82333;
-                transform: scale(1.05);
-            }
+        button.cancel:hover {
+        background-color: #c82333;
+        transform: scale(1.05);
+        }
 
         .register-link {
-            display: block;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #007bff;
-            cursor: pointer;
+        display: block;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #007bff;
+        cursor: pointer;
         }
 
         .error-message {
-            color: red;
-            font-size: 0.9rem;
-            margin-top: 10px;
+        color: red;
+        font-size: 0.9rem;
+        margin-top: 10px;
         }
 
         .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
         }
 
-            .back-button:hover {
-                color: #007bff;
-            }
+        .back-button:hover {
+        color: #007bff;
+        }
 
         .input-error {
-            border-color: red;
+        border-color: red;
         }
 
         .error-text {
-            color: red;
-            font-size: 0.8rem;
-            text-align: left;
-            margin-top: 4px;
+        color: red;
+        font-size: 0.8rem;
+        text-align: left;
+        margin-top: 4px;
         }
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -211,8 +211,8 @@
 
         <label>Должность</label>
         <input @bind="registerModel.Post" maxlength="100"
-               oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё\s-]/g,'').replace(/^(?=-)/g, '').replace(/\s+/g, ' ')"
-               class="@GetInputClass(registerModel.Post)" />
+        oninput="this.value=this.value.replace(/[^A-Za-zА-Яа-яЁё\s-]/g,'').replace(/^(?=-)/g, '').replace(/\s+/g, ' ')"
+        class="@GetInputClass(registerModel.Post)" />
         @if (submitRegister && string.IsNullOrEmpty(registerModel.Post))
         {
             <div class="error-text">Заполните поле</div>
@@ -267,7 +267,19 @@
     }
 </div>
 
+<script>
+    window.setCookie = (name, value, minutes) => {
+        const date = new Date();
+        date.setTime(date.getTime() + (minutes * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    }
+</script>
+
 @code {
+    [Inject]
+    protected IJSRuntime JsRuntime { get; set; } = null!;
+
     private LoginModel loginModel = new LoginModel();
     private string errorMessage = string.Empty;
     private RegisterModel registerModel = new();
@@ -312,15 +324,18 @@
 
             if (response.IsSuccessStatusCode)
             {
+                var responseMessage = await Http.PostAsJsonAsync("api/Auth", loginModel);
+                var result = await responseMessage.Content.ReadAsStringAsync();
+
+                await JsRuntime.InvokeVoidAsync("setCookie", "AccessToken", result, 60);
+
                 NavigationManager.NavigateTo("/profile");
             }
             else
             {
                 errorMessage = await response.Content.ReadAsStringAsync();
                 if (string.IsNullOrEmpty(errorMessage))
-                {
                     errorMessage = "Неверный UniCode или пароль.";
-                }
             }
         }
         catch (Exception ex)

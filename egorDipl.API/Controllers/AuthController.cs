@@ -1,21 +1,48 @@
-﻿using egorDipl.Data.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using egorDipl.Data;
+using egorDipl.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using static UserController;
 
 namespace egorDipl.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(SponsorsDbContext Context) : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<TokenDto> Auth([FromBody] LoginModel loginModel)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            var operationResult = new TokenDto();
+
+            var user = await Context.User.FirstOrDefaultAsync(u => u.UniCode == loginModel.UniCode);
+
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("001E33952B8942A5B07D88ECD3CD4719001E33952B8942A5B07D88ECD3CD4719"));
+            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.UniCode.ToString()),
+                new Claim("Role", user.Role.Name)
+            };
+
+            var tokenOptions = new JwtSecurityToken(
+                issuer: "Egor",
+                audience: "https://localhost:7149",
+                claims: [.. claims],
+                expires: DateTime.Now.AddMinutes(50),
+                signingCredentials: signinCredentials
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+            return new TokenDto() { AccessToken = tokenString };
         }
 
         // POST: api/Auth/Login
@@ -29,14 +56,14 @@ namespace egorDipl.API.Controllers
                     return BadRequest("Заполните все поля.");
                 }
 
-                var user = await _userManager.FindByNameAsync(loginModel.UniCode.ToString());
+                var user = await Context.User.FirstOrDefaultAsync(u => u.UniCode == loginModel.UniCode);
                 if (user == null)
                 {
                     return Unauthorized("Неверный UniCode или пароль.");
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
-                if (result.Succeeded)
+                var result = await Context.User.FirstOrDefaultAsync(u => u.UniCode == loginModel.UniCode && u.Password == loginModel.Password);
+                if (result != null)
                 {
                     return Ok("Авторизация успешна.");
                 }

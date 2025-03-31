@@ -15,15 +15,15 @@ namespace egorDipl.Data.Models
 
         public int? OrganizerId { get; set; }
 
-        public Company? Organizer { get; set; }
+        public virtual Company? Organizer { get; set; }
 
         public int? SponsorId { get; set; }
 
-        public Company? Sponsor { get; set; }
+        public virtual Company? Sponsor { get; set; }
 
         public int? StatusId { get; set; }
 
-        public EventStatus? Status { get; set; }
+        public virtual EventStatus? Status { get; set; }
 
         public DateTime Date { get; set; }
     }

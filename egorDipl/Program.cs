@@ -2,7 +2,7 @@ using egorDipl.Components;
 using egorDipl.Data;
 using egorDipl.Data.Models;
 using egorDipl.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +12,7 @@ builder.Services.AddDbContext<SponsorsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserProvider, UserProvider>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
