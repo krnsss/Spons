@@ -19,7 +19,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7243")
+    BaseAddress = new Uri("https://localhost:7149")
 });
 builder.Services.AddCors(options =>
 {
