@@ -2,6 +2,7 @@
 @using egorDipl.Data.Models
 @inject HttpClient Http
 @rendermode InteractiveServer
+@inject IUserProvider UserProvider
 
 <head>
     <style>
@@ -193,7 +194,14 @@
 
 <h3>Компании</h3>
 
-<button class="primary" @onclick="AddCompany">Добавить компанию</button>
+@if (UserProvider.Role != null)
+{
+    @if (UserProvider.Role.Name != "Пользователь")
+    {
+        <button class="primary" @onclick="AddCompany">Добавить компанию</button>
+    }
+
+}
 
 @if (companies == null)
 {
@@ -210,7 +218,15 @@ else
                 <th>Число событий</th>
                 <th>Отзывы</th>
                 <th>Рейтинг</th>
-                <th>Действия</th>
+
+                @if (UserProvider.Role != null)
+                {
+                    @if (UserProvider.Role.Name != "Пользователь")
+                    {
+                        <th>Действия</th>
+                    }
+
+                }
             </tr>
         </thead>
         <tbody>
@@ -223,10 +239,18 @@ else
                     <td>@company.CountEvents</td>
                     <td>@company.FeedBacksCount</td>
                     <td>@company.Rating</td>
-                    <td>
-                        <button class="edit" @onclick="() => EditCompany(company.Id)">Редактировать</button>
-                        <button class="delete" @onclick="() => DeleteCompany(company.Id)">Удалить</button>
-                    </td>
+
+                    @if (UserProvider.Role != null)
+                    {
+                        @if (UserProvider.Role.Name != "Пользователь")
+                        {
+                            <td>
+                                <button class="edit" @onclick="() => EditCompany(company.Id)">Редактировать</button>
+                                <button class="delete" @onclick="() => DeleteCompany(company.Id)">Удалить</button>
+                            </td>
+                        }
+
+                    }
                 </tr>
             }
         </tbody>

@@ -224,21 +224,26 @@
 
             <label>Организатор</label>
             <select @bind="selectedEvent.OrganizerId" class="@GetFieldClass(selectedEvent.OrganizerId)">
-                <option value="">Выберите организатора</option>
+                @* <option value="">Выберите организатора</option> *@
                 @foreach (var company in companies)
                 {
-                    <option value="@company.Id">@company.Name</option>
+                    <option value="@company.Id" selected="@(company.Id == companyId)">@company.Name</option>
                 }
             </select>
 
-            <label>Спонсор:</label>
-            <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
-                <option value="">Выберите спонсора</option>
-                @foreach (var company in companies)
-                {
-                    <option value="@company.Id">@company.Name</option>
-                }
-            </select>
+            @if (UserProvider.Role != null) {
+                    if(UserProvider.Role.Name != "Владелец")
+                    {
+                        <label>Спонсор:</label>
+                        <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
+                            <option value="">Выберите спонсора</option>
+                            @foreach (var company in companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
+                    }
+            }
 
             <label>Статус:</label>
             <select @bind="selectedEvent.StatusId" class="@GetFieldClass(selectedEvent.StatusId)">
@@ -293,29 +298,47 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Название</th>
                 <th>Описание</th>
-                <th>Организатор</th>
+                @if (UserProvider.Role != null)
+                {
+                    if(UserProvider.Role.Name != "Владелец")
+                    {
+                        <th>Организатор</th>
+                    }
+                }
                 <th>Спонсор</th>
                 <th>Статус</th>
                 <th>Дата</th>
-                <th>Действия</th>
+
+                @if (UserProvider.Role != null)
+                {
+                    @if (UserProvider.Role.Name != "Пользователь")
+                    {
+                        <th>Действия</th>
+                    }
+
+                }
             </tr>
         </thead>
         <tbody>
             @foreach (var eventItem in events)
             {
                 <tr>
-                    <td>@eventItem.Id</td>
                     <td>@eventItem.Name</td>
                     <td>@eventItem.Description</td>
-                    @if (eventItem.OrganizerId != null) {
-                        <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
-                    }
-                    else
+                    @if (UserProvider.Role != null)
                     {
-                        <td></td>
+                        if (UserProvider.Role.Name != "Владелец")
+                        {
+                                @if (eventItem.OrganizerId != null) {
+                                    <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                        }
                     }
                     @if (eventItem.SponsorId != null) {
                         <td>@GetSponsorName((int)eventItem.SponsorId)</td>
@@ -334,13 +357,13 @@ else
                     <td>@eventItem.Date.ToString("yyyy-MM-dd")</td>
                     @if (UserProvider.Role != null)
                     {
-                                @if (UserProvider.Role.Name != "Пользователь")
-                                {
-                                    <td>
-                                        <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
-                                        <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
-                                    </td>
-                                }
+                        @if (UserProvider.Role.Name != "Пользователь")
+                        {
+                            <td>
+                                <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
+                                <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
+                            </td>
+                        }
                     }
                 </tr>
             }
@@ -352,8 +375,12 @@ else
     private List<Event> events = new();
     private List<Company> companies = new();
     private List<EventStatus> statuses = new();
+    private List<User> users = new();
+    private User user = new();
     private Event selectedEvent = new();
     private bool showAddEditDialog = false;
+
+    private int? companyId = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -365,6 +392,20 @@ else
     private async Task LoadEvents()
     {
         events = await Http.GetFromJsonAsync<List<Event>>("api/Event");
+
+        if (UserProvider.Role != null)
+        {
+            if(UserProvider.Role.Name == "Владелец")
+            {
+                users = await Http.GetFromJsonAsync<List<User>>("api/User");
+                user = users.FirstOrDefault(user => user.UniCode == Convert.ToInt32(UserProvider.Name));
+                companyId = user.CompanyId;
+
+                events = events.Where(e => e.OrganizerId == companyId).ToList();
+            }
+        }
+
+        StateHasChanged();
     }
 
     private async Task LoadCompanies()

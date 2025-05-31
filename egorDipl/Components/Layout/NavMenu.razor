@@ -1,4 +1,7 @@
-﻿<head>
+﻿@using egorDipl.Data.Models
+@inject IUserProvider UserProvider
+
+<head>
     <style>
         .top-row {
             background-color: #1a1a1a;
@@ -49,24 +52,34 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/users">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Пользователи
-            </NavLink>
-        </div>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/orders">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Запросы
+        @if (UserProvider.Role != null)
+        {
+            @if (UserProvider.Role.Name != "Пользователь")
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/users">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Пользователи
+                    </NavLink>
+                </div>                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/orders">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Запросы
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/coops">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Сотрудничества
+                    </NavLink>
+                </div>
+            }
+        }
+
+         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/profile">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Профиль
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/coops">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Сотрудничества
-            </NavLink>
-        </div>
-        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true" style="color: darkred;"></span> Выйти
