@@ -1,4 +1,5 @@
 ﻿using egorDipl.Data;
+using egorDipl.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SponsorsDbContext>(options =>
     options
     .UseLazyLoadingProxies()
-    .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -19,6 +20,14 @@ builder.Services.AddAuthentication(opt =>
 })
     .AddJwtBearer(options =>
             {
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["AccessToken"];
+                        return Task.CompletedTask;
+                    }
+                };
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -31,7 +40,6 @@ builder.Services.AddAuthentication(opt =>
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("001E33952B8942A5B07D88ECD3CD4719001E33952B8942A5B07D88ECD3CD4719"))
                 };
             });
-
 
 builder.Services.AddAuthorization();
 

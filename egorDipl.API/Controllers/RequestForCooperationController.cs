@@ -35,22 +35,24 @@ namespace egorDipl.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<RequestForCooperation>> PostRequestForCooperation(RequestForCooperation request)
+        public async Task<ActionResult<RequestForCooperation>> PostRequestForCooperation(RequestForCooperationRequest request)
         {
             var notification = new Notification()
             {
-                CompanyId = (int)request.SenderCompanyId,
-                EventId = (int)request.EventId,
+                CompanyId = (int)request.RequestForCooperation.SenderCompanyId,
+                EventId = (int)request.RequestForCooperation.EventId,
                 CreatedOn = DateTime.Now,
                 NotificationStatus = NotificationStatus.Sended,
-                CreatedById = 44
+                CreatedById = request.UserId
             };
 
-            _context.RequestForCooperation.Add(request);
+            _context.RequestForCooperation.Add(request.RequestForCooperation);
             _context.Notification.Add(notification);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetRequestForCooperation", new { id = request.Id }, request);
+
+            return CreatedAtAction("GetRequestForCooperation", new { id = request.RequestForCooperation.Id }, request);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRequestForCooperation(int id, RequestForCooperation request)

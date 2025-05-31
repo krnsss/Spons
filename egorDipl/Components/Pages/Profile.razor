@@ -76,7 +76,7 @@
     </style>
 </head>
 
-<h3>Профиль пользователя</h3>
+<PageTitle>Профиль пользователя</PageTitle>
 
 @* @if (user == null)
 {
@@ -166,11 +166,6 @@ else
 @code {
     private User? user;
     private bool showEditDialog = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // user = await Http.GetFromJsonAsync<User>("api/User/2");
-    }
 
     private void EditUser()
     {

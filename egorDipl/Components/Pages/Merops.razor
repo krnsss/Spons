@@ -7,192 +7,192 @@
 <head>
     <style>
         body {
-            background-color: black;
-            color: white;
+        background-color: black;
+        color: white;
         }
 
         html {
-            background-color: #000;
-            color: #fff;
+        background-color: #000;
+        color: #fff;
         }
 
         a, .btn-link {
-            color: #007bff;
+        color: #007bff;
         }
 
         .btn-primary {
-            color: #fff;
-            background-color: #007bff;
-            border-color: #0056b3;
+        color: #fff;
+        background-color: #007bff;
+        border-color: #0056b3;
         }
 
         .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-            box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #007bff;
+        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #007bff;
         }
 
         .content {
-            padding-top: 1.1rem;
+        padding-top: 1.1rem;
         }
 
         h1:focus {
-            outline: none;
+        outline: none;
         }
 
         .valid.modified:not([type=checkbox]) {
-            outline: 1px solid #26b050;
+        outline: 1px solid #26b050;
         }
 
         .invalid {
-            outline: 1px solid #ff0000;
+        outline: 1px solid #ff0000;
         }
 
         .validation-message {
-            color: #ff0000;
+        color: #ff0000;
         }
 
         table {
-            width: 100%;
-            margin-top: 1rem;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 8px;
-            overflow: hidden;
+        width: 100%;
+        margin-top: 1rem;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px;
+        overflow: hidden;
         }
 
         th, td {
-            padding: 12px 15px;
-            text-align: left;
+        padding: 12px 15px;
+        text-align: left;
         }
 
         thead {
-            background-color: #007bff;
-            color: white;
+        background-color: #007bff;
+        color: white;
         }
 
         tbody tr {
-            background-color: #222;
-            border-bottom: 1px solid #333;
+        background-color: #222;
+        border-bottom: 1px solid #333;
         }
 
-            tbody tr:hover {
-                background-color: #333;
-            }
+        tbody tr:hover {
+        background-color: #333;
+        }
 
         th {
-            font-size: 1.1rem;
-            font-weight: bold;
+        font-size: 1.1rem;
+        font-weight: bold;
         }
 
         .edit, .delete {
-            padding: 6px 12px;
-            font-size: 0.9rem;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            margin-right: 5px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        margin-right: 5px;
         }
 
         .edit {
-            background-color: #28a745;
-            color: white;
+        background-color: #28a745;
+        color: white;
         }
 
-            .edit:hover {
-                background-color: #218838;
-            }
+        .edit:hover {
+        background-color: #218838;
+        }
 
         .delete {
-            background-color: #dc3545;
-            color: white;
+        background-color: #dc3545;
+        color: white;
         }
 
-            .delete:hover {
-                background-color: #c82333;
-            }
+        .delete:hover {
+        background-color: #c82333;
+        }
 
         .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
         }
 
         .modal-content {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        background-color: #333;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-            .modal-content h3 {
-                margin-top: 0;
-            }
+        .modal-content h3 {
+        margin-top: 0;
+        }
 
         .modal input,
         .modal select,
         .modal button {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #007bff;
-            background-color: #222;
-            color: white;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #007bff;
+        background-color: #222;
+        color: white;
         }
 
         .modal button {
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
         }
 
-            .modal button:hover {
-                background-color: #0056b3;
-            }
+        .modal button:hover {
+        background-color: #0056b3;
+        }
 
         .cancel {
-            background-color: #6c757d;
+        background-color: #6c757d;
         }
 
-            .cancel:hover {
-                background-color: #5a6268;
-            }
+        .cancel:hover {
+        background-color: #5a6268;
+        }
 
         button.primary {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
         }
 
-            button.primary:hover {
-                background-color: #218838;
-            }
+        button.primary:hover {
+        background-color: #218838;
+        }
 
         h3 {
-            text-align: center;
+        text-align: center;
         }
 
         .blazor-error-boundary {
-            display: none;
+        display: none;
         }
     </style>
 </head>
 
-<h3>Мероприятия</h3>
+<PageTitle>Мероприятия</PageTitle>
 
 @if (UserProvider.Role != null)
 {
@@ -210,26 +210,26 @@
 
             <div class="readonly-field">
                 <label>Мероприятие</label>
-                <input value="@selectedEvent?.Name" readonly />
+                <span>@selectedEvent?.Name</span>
             </div>
 
             <div class="readonly-field">
                 <label>Компания</label>
-                <input value="@selectedEvent?.Organizer?.Name" readonly />
+                <span>@selectedEvent?.Organizer?.Name</span>
             </div>
 
             <div class="readonly-field">
                 <label>Дата отправки</label>
-                <input value="@DateTime.Now.ToString("dd.MM.yyyy HH:mm")" readonly />
+                <span>@DateTime.Now.ToString("dd.MM.yyyy HH:mm")</span>
             </div>
 
             <label>Сообщение</label>
-            <textarea @bind="newRequest.TextLetter"
-                      maxlength="500"
-                      placeholder="Введите текст заявки..."
-                      class="@(submitClicked && string.IsNullOrEmpty(newRequest.TextLetter) ? "invalid" : "")">
+            <textarea @bind="newRequest.RequestForCooperation.TextLetter"
+            maxlength="500"
+            placeholder="Введите текст заявки..."
+            class="@(submitClicked && string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter) ? "invalid" : "")">
             </textarea>
-            @if (submitClicked && string.IsNullOrEmpty(newRequest.TextLetter))
+            @if (submitClicked && string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter))
             {
                 <div class="validation-message" style="color: red;">Заполните поле</div>
             }
@@ -269,7 +269,7 @@
 
             <label>Организатор</label>
             <select @bind="selectedEvent.OrganizerId" class="@GetFieldClass(selectedEvent.OrganizerId)">
-                @* <option value="">Выберите организатора</option> *@
+                <option value="" disabled selected hidden>Выберите организатора</option>
                 @foreach (var company in companies)
                 {
                     <option value="@company.Id" selected="@(company.Id == companyId)">@company.Name</option>
@@ -277,17 +277,17 @@
             </select>
 
             @if (UserProvider.Role != null) {
-                    if(UserProvider.Role.Name != "Владелец")
-                    {
-                        <label>Спонсор:</label>
-                        <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
-                            <option value="">Выберите спонсора</option>
-                            @foreach (var company in companies)
-                            {
-                                <option value="@company.Id">@company.Name</option>
-                            }
-                        </select>
-                    }
+                if(UserProvider.Role.Name != "Владелец")
+                {
+                    <label>Спонсор:</label>
+                    <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
+                        <option value="" disabled selected hidden>Выберите спонсора</option>
+                        @foreach (var company in companies)
+                        {
+                            <option value="@company.Id">@company.Name</option>
+                        }
+                    </select>
+                }
             }
 
             <label>Статус:</label>
@@ -305,7 +305,7 @@
             {
                 <div class="validation-message" style="color: red;">Заполните поле</div>
             }
-            
+
             <button class="save" @onclick="ValidateAndSave">Сохранить</button>
             <button class="cancel" @onclick="Cancel">Отмена</button>
 
@@ -315,66 +315,6 @@
             }
         </div>
     </div>
-}
-
-@code {
-    private bool submitClicked = false;
-    private string errorMessage = string.Empty;
-    private RequestForCooperation newRequest = new();
-
-    private async Task SendRequest()
-    {
-        submitClicked = true;
-
-        if (string.IsNullOrEmpty(newRequest.TextLetter))
-        {
-            return;
-        }
-
-        try
-        {
-            // Заполняем обязательные поля
-            newRequest.EventId = selectedEvent?.Id;
-            newRequest.SenderCompanyId = selectedEvent?.OrganizerId;
-            newRequest.StatusId = 1; // Например, 1 = "Новая"
-
-            var response = await Http.PostAsJsonAsync("api/RequestForCooperation", newRequest);
-
-            if (response.IsSuccessStatusCode)
-            {
-                // Закрываем модалку или очищаем форму
-                newRequest = new();
-                CloseModal();
-            }
-            else
-            {
-                errorMessage = "Ошибка при отправке заявки";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Произошла ошибка: {ex.Message}";
-        }
-    }
-
-    private void CloseModal()
-    {
-        showAddRequest = false;
-
-        StateHasChanged();
-    }
-
-    private async void ValidateAndSave()
-    {
-        submitClicked = true;
-
-        await SaveEvent();
-    }
-
-    private string GetFieldClass(object fieldValue)
-    {
-        return submitClicked && string.IsNullOrEmpty(fieldValue?.ToString()) ? "invalid" : "";
-    }
 }
 
 @if (events == null)
@@ -419,13 +359,13 @@ else
                     {
                         if (UserProvider.Role.Name != "Владелец")
                         {
-                                @if (eventItem.OrganizerId != null) {
-                                    <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
-                                }
-                                else
-                                {
-                                    <td></td>
-                                }
+                            @if (eventItem.OrganizerId != null) {
+                                <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                         }
                     }
                     @if (eventItem.SponsorId != null) {
@@ -471,6 +411,65 @@ else
     private bool showAddRequest = false;
 
     private int? companyId = 0;
+
+    private bool submitClicked = false;
+    private string errorMessage = string.Empty;
+    private RequestForCooperationRequest newRequest = new() { RequestForCooperation = new RequestForCooperation() { TextLetter = string.Empty } };
+
+    private async Task SendRequest()
+    {
+        submitClicked = true;
+
+        if (string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter))
+        {
+            return;
+        }
+
+        try
+        {
+            newRequest.RequestForCooperation.EventId = selectedEvent?.Id;
+            newRequest.RequestForCooperation.SenderCompanyId = selectedEvent?.OrganizerId;
+            newRequest.RequestForCooperation.StatusId = 1;
+            newRequest.UserId = UserProvider.UserId;
+
+            var response = await Http.PostAsJsonAsync("api/RequestForCooperation", newRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                newRequest = new();
+                CloseModal();
+            }
+            else
+            {
+                errorMessage = "Ошибка при отправке заявки";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Произошла ошибка: {ex.Message}";
+        }
+
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        showAddRequest = false;
+
+        StateHasChanged();
+    }
+
+    private async void ValidateAndSave()
+    {
+        submitClicked = true;
+
+        await SaveEvent();
+    }
+
+    private string GetFieldClass(object fieldValue)
+    {
+        return submitClicked && string.IsNullOrEmpty(fieldValue?.ToString()) ? "invalid" : "";
+    }
 
     protected override async Task OnInitializedAsync()
     {

@@ -7,6 +7,10 @@ namespace egorDipl.Data.Models
     {
         public required string Name { get; set; }
 
+        public required int UserId { get; set; }
+
+        public required int CompanyId { get; set; }
+
         public required StaffRole Role { get; set; }
 
         public void ParseJwt(string token)
@@ -25,6 +29,16 @@ namespace egorDipl.Data.Models
 
                 if (roleClaim != null)
                     Role = new StaffRole() { Name = roleClaim.Value };
+
+                var companyIdClaim = claims.FirstOrDefault(c => c.Type == "CompanyId");
+
+                if (companyIdClaim != null)
+                    CompanyId = Convert.ToInt32(companyIdClaim.Value);
+
+                var userIdClaim = claims.FirstOrDefault(c => c.Type == "UserId");
+
+                if (userIdClaim != null)
+                    UserId = Convert.ToInt32(userIdClaim.Value);
             }
         }
     }
@@ -34,6 +48,10 @@ namespace egorDipl.Data.Models
         StaffRole Role { get; set; }
 
         string Name { get; set; }
+
+        int CompanyId { get; set; }
+
+        int UserId { get; set; }
 
         public void ParseJwt(string token);
     }

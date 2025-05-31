@@ -29,7 +29,9 @@ namespace egorDipl.API.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.UniCode.ToString()),
-                new Claim("Role", user.Role.Name)
+                new Claim("Role", user.Role.Name),
+                new Claim("CompanyId", user.CompanyId.ToString()),
+                new Claim("UserId", user.Id.ToString())
             };
 
             var tokenOptions = new JwtSecurityToken(

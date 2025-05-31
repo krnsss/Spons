@@ -5,7 +5,7 @@
 @inject IUserProvider UserProvider
 @rendermode InteractiveServer
 
-<h3 class="page-title">Уведомления</h3>
+<PageTitle>Уведомления</PageTitle>
 
 @if (notifications == null)
 {
@@ -47,12 +47,12 @@ else
 }
 
 @code {
-    private List<Notification> notifications = new();
+    private List<Notification> notifications;
 
     protected override async Task OnInitializedAsync()
     {
-    //     var role = UserProvider.Role.Name;
-        notifications = await Http.GetFromJsonAsync<List<Notification>>("api/Notification");
+        var companyId = UserProvider.CompanyId;
+        notifications = (await Http.GetFromJsonAsync<List<Notification>>("api/Notification")).Where(n => n.CompanyId == companyId).ToList();
     }
 
     private string GetStatusClass(NotificationStatus status)
