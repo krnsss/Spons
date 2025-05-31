@@ -1,5 +1,6 @@
-﻿using egorDipl.Data.Models;
-using egorDipl.Data;
+﻿using egorDipl.Data;
+using egorDipl.Data.Enums;
+using egorDipl.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,17 @@ namespace egorDipl.API.Controllers
         [HttpPost]
         public async Task<ActionResult<RequestForCooperation>> PostRequestForCooperation(RequestForCooperation request)
         {
+            var notification = new Notification()
+            {
+                CompanyId = (int)request.SenderCompanyId,
+                EventId = (int)request.EventId,
+                CreatedOn = DateTime.Now,
+                NotificationStatus = NotificationStatus.Sended,
+                CreatedById = 44
+            };
+
             _context.RequestForCooperation.Add(request);
+            _context.Notification.Add(notification);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetRequestForCooperation", new { id = request.Id }, request);
         }

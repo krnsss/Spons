@@ -202,6 +202,51 @@
     }
 }
 
+@if (showAddRequest)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h3>Заявка на сотрудничество</h3>
+
+            <div class="readonly-field">
+                <label>Мероприятие</label>
+                <input value="@selectedEvent?.Name" readonly />
+            </div>
+
+            <div class="readonly-field">
+                <label>Компания</label>
+                <input value="@selectedEvent?.Organizer?.Name" readonly />
+            </div>
+
+            <div class="readonly-field">
+                <label>Дата отправки</label>
+                <input value="@DateTime.Now.ToString("dd.MM.yyyy HH:mm")" readonly />
+            </div>
+
+            <label>Сообщение</label>
+            <textarea @bind="newRequest.TextLetter"
+                      maxlength="500"
+                      placeholder="Введите текст заявки..."
+                      class="@(submitClicked && string.IsNullOrEmpty(newRequest.TextLetter) ? "invalid" : "")">
+            </textarea>
+            @if (submitClicked && string.IsNullOrEmpty(newRequest.TextLetter))
+            {
+                <div class="validation-message" style="color: red;">Заполните поле</div>
+            }
+
+            <div class="modal-actions">
+                <button class="save" @onclick="SendRequest">Отправить</button>
+                <button class="cancel" @onclick="CloseModal">Отмена</button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message" style="color: red;">@errorMessage</div>
+            }
+        </div>
+    </div>
+}
+
 @if (showAddEditDialog)
 {
     <div class="modal">
@@ -275,6 +320,49 @@
 @code {
     private bool submitClicked = false;
     private string errorMessage = string.Empty;
+    private RequestForCooperation newRequest = new();
+
+    private async Task SendRequest()
+    {
+        submitClicked = true;
+
+        if (string.IsNullOrEmpty(newRequest.TextLetter))
+        {
+            return;
+        }
+
+        try
+        {
+            // Заполняем обязательные поля
+            newRequest.EventId = selectedEvent?.Id;
+            newRequest.SenderCompanyId = selectedEvent?.OrganizerId;
+            newRequest.StatusId = 1; // Например, 1 = "Новая"
+
+            var response = await Http.PostAsJsonAsync("api/RequestForCooperation", newRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Закрываем модалку или очищаем форму
+                newRequest = new();
+                CloseModal();
+            }
+            else
+            {
+                errorMessage = "Ошибка при отправке заявки";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Произошла ошибка: {ex.Message}";
+        }
+    }
+
+    private void CloseModal()
+    {
+        showAddRequest = false;
+
+        StateHasChanged();
+    }
 
     private async void ValidateAndSave()
     {
@@ -360,6 +448,7 @@ else
                         @if (UserProvider.Role.Name != "Пользователь")
                         {
                             <td>
+                                <button class="edit" @onclick="() => CreateRequest(eventItem.Id)">Подать заявку</button>
                                 <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
                                 <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
                             </td>
@@ -379,6 +468,7 @@ else
     private User user = new();
     private Event selectedEvent = new();
     private bool showAddEditDialog = false;
+    private bool showAddRequest = false;
 
     private int? companyId = 0;
 
@@ -446,6 +536,12 @@ else
     {
         selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
         showAddEditDialog = true;
+    }
+    
+    private async Task CreateRequest(int id)
+    {
+        selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
+        showAddRequest = true;
     }
 
     private async Task SaveEvent()

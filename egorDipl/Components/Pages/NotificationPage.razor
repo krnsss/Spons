@@ -1,0 +1,304 @@
+﻿@page "/notifications"
+@using egorDipl.Data.Models
+@using egorDipl.Data.Enums
+@inject HttpClient Http
+@inject IUserProvider UserProvider
+@rendermode InteractiveServer
+
+<h3 class="page-title">Уведомления</h3>
+
+@if (notifications == null)
+{
+    <div class="loading">Загрузка...</div>
+}
+else if (!notifications.Any())
+{
+    <div class="empty-notifications">Нет новых уведомлений</div>
+}
+else
+{
+    <div class="notifications-container">
+        @foreach (var notification in notifications)
+        {
+            <div class="notification-card @GetStatusClass(notification.NotificationStatus)">
+                <div class="notification-header">
+                    <span class="notification-event">@notification.Event?.Name</span>
+                    <span class="notification-status">@GetStatusText(notification.NotificationStatus)</span>
+                    <span class="notification-date">@notification.CreatedOn.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                <div class="notification-body">
+                    <p class="notification-company">От: @notification.Company?.Name</p>
+                    <p class="notification-note">@notification.Note</p>
+                </div>
+                <div class="notification-actions">
+                    @if (notification.NotificationStatus == NotificationStatus.Sended)
+                    {
+                        <button @onclick="@(() => MarkAsRead(notification))" class="btn-read">Прочитано</button>
+                    }
+                    else if (notification.NotificationStatus == NotificationStatus.Readed)
+                    {
+                        <button @onclick="@(() => AcceptNotification(notification))" class="btn-accept">Принять</button>
+                        <button @onclick="@(() => RejectNotification(notification))" class="btn-reject">Отклонить</button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Notification> notifications = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+    //     var role = UserProvider.Role.Name;
+        notifications = await Http.GetFromJsonAsync<List<Notification>>("api/Notification");
+    }
+
+    private string GetStatusClass(NotificationStatus status)
+    {
+        return status switch
+        {
+            NotificationStatus.Sended => "status-sended",
+            NotificationStatus.Readed => "status-readed",
+            NotificationStatus.Accepted => "status-accepted",
+            NotificationStatus.Revoked => "status-revoked",
+            _ => ""
+        };
+    }
+
+    private string GetStatusText(NotificationStatus status)
+    {
+        return status switch
+        {
+            NotificationStatus.Sended => "Отправлено",
+            NotificationStatus.Readed => "Прочитано",
+            NotificationStatus.Accepted => "Принято",
+            NotificationStatus.Revoked => "Отклонено",
+            _ => ""
+        };
+    }
+
+    private async Task MarkAsRead(Notification notification)
+    {
+        try
+        {
+            notification.NotificationStatus = NotificationStatus.Readed;
+            var response = await Http.PutAsJsonAsync($"api/Notification/{notification.Id}", notification);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var index = notifications.FindIndex(n => n.Id == notification.Id);
+                if (index != -1)
+                {
+                    notifications[index] = notification;
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при обновлении уведомления: {ex.Message}");
+        }
+    }
+
+    private async Task AcceptNotification(Notification notification)
+    {
+        try
+        {
+            notification.NotificationStatus = NotificationStatus.Accepted;
+            var response = await Http.PutAsJsonAsync($"api/Notification/{notification.Id}", notification);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var index = notifications.FindIndex(n => n.Id == notification.Id);
+                if (index != -1)
+                {
+                    notifications[index] = notification;
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при принятии уведомления: {ex.Message}");
+        }
+    }
+
+    private async Task RejectNotification(Notification notification)
+    {
+        try
+        {
+            notification.NotificationStatus = NotificationStatus.Revoked;
+            var response = await Http.PutAsJsonAsync($"api/Notification/{notification.Id}", notification);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var index = notifications.FindIndex(n => n.Id == notification.Id);
+                if (index != -1)
+                {
+                    notifications[index] = notification;
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при отклонении уведомления: {ex.Message}");
+        }
+    }
+}
+
+<style>
+    .page-title {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .notifications-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .notification-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.2s;
+    }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-event {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1em;
+    }
+
+    .notification-status {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: 500;
+    }
+
+    .status-sended .notification-status {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .status-readed .notification-status {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+    .status-accepted .notification-status {
+        background-color: #9b59b6;
+        color: white;
+    }
+
+    .status-revoked .notification-status {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .notification-date {
+        color: #7f8c8d;
+        font-size: 0.8em;
+    }
+
+    .notification-body {
+        margin-bottom: 15px;
+    }
+
+    .notification-company {
+        color: #3498db;
+        margin-bottom: 8px;
+    }
+
+    .notification-note {
+        color: #34495e;
+        line-height: 1.5;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-read, .btn-accept {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.2s;
+    }
+
+    .btn-read {
+        background-color: #3498db;
+        color: white;
+    }
+
+        .btn-read:hover {
+            background-color: #2980b9;
+        }
+
+    .btn-accept {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+        .btn-accept:hover {
+            background-color: #27ae60;
+        }
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: #7f8c8d;
+    }
+
+    .empty-notifications {
+        text-align: center;
+        padding: 40px;
+        color: #7f8c8d;
+        font-size: 1.2em;
+    }
+
+    .btn-reject {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.2s;
+        background-color: #e74c3c;
+        color: white;
+    }
+
+        .btn-reject:hover {
+            background-color: #c0392b;
+        }
+
+    .status-revoked .notification-status {
+        background-color: #e74c3c;
+        color: white;
+    }
+</style>
