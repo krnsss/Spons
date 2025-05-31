@@ -220,9 +220,10 @@
 
         <label>Роль</label>
         <select @bind="registerModel.RoleId" class="@GetInputClass(registerModel.RoleId)">
-            <option value="1">Администратор</option>
-            <option value="2">Пользователь</option>
-            <option value="3">Владелец</option>
+            @foreach (var role in roles)
+            {
+                <option value="@role.Id">@role.Name</option>
+            }
         </select>
 
         <label>Компания</label>
@@ -286,6 +287,7 @@
     private bool showRegistration = false;
     private SelectedCompany selectedCompany = new SelectedCompany();
     private List<Company> companies = new List<Company>();
+    private List<StaffRole> roles = new List<StaffRole>();
 
     private bool submitLogin = false;
     private bool submitRegister = false;
@@ -299,6 +301,7 @@
     protected override async Task OnInitializedAsync()
     {
         companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
+        roles = await Http.GetFromJsonAsync<List<StaffRole>>("api/StaffRole");
     }
 
     private async Task Login()

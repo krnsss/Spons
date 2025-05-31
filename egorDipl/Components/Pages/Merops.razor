@@ -1,6 +1,7 @@
 ﻿@page "/merops"
 @using egorDipl.Data.Models
 @inject HttpClient Http
+@inject IUserProvider UserProvider
 @rendermode InteractiveServer
 
 <head>
@@ -49,7 +50,6 @@
             color: #ff0000;
         }
 
-        /* Таблица */
         table {
             width: 100%;
             margin-top: 1rem;
@@ -83,7 +83,6 @@
             font-weight: bold;
         }
 
-        /* Кнопки в таблице */
         .edit, .delete {
             padding: 6px 12px;
             font-size: 0.9rem;
@@ -111,7 +110,6 @@
                 background-color: #c82333;
             }
 
-        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -196,7 +194,13 @@
 
 <h3>Мероприятия</h3>
 
-<button class="primary" @onclick="AddEvent">Добавить мероприятие</button>
+@if (UserProvider.Role != null)
+{
+    @if (UserProvider.Role.Name != "Пользователь")
+    {
+        <button class="primary" @onclick="AddEvent">Добавить мероприятие</button>
+    }
+}
 
 @if (showAddEditDialog)
 {
@@ -306,14 +310,38 @@ else
                     <td>@eventItem.Id</td>
                     <td>@eventItem.Name</td>
                     <td>@eventItem.Description</td>
-                    <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
-                    <td>@GetSponsorName((int)eventItem.SponsorId)</td>
-                    <td>@GetStatusName((int)eventItem.StatusId)</td>
+                    @if (eventItem.OrganizerId != null) {
+                        <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    @if (eventItem.SponsorId != null) {
+                        <td>@GetSponsorName((int)eventItem.SponsorId)</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    @if (eventItem.StatusId != null) {
+                        <td>@GetStatusName((int)eventItem.StatusId)</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                     <td>@eventItem.Date.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
-                        <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
-                    </td>
+                    @if (UserProvider.Role != null)
+                    {
+                                @if (UserProvider.Role.Name != "Пользователь")
+                                {
+                                    <td>
+                                        <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
+                                        <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
+                                    </td>
+                                }
+                    }
                 </tr>
             }
         </tbody>
@@ -388,6 +416,7 @@ else
             {
                 showAddEditDialog = false;
                 await LoadEvents();
+                StateHasChanged();
             }
             else
             {
@@ -401,6 +430,7 @@ else
             {
                 showAddEditDialog = false;
                 await LoadEvents();
+                StateHasChanged();
             }
             else
             {

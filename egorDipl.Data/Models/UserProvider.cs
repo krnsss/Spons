@@ -31,6 +31,10 @@ namespace egorDipl.Data.Models
 
     public interface IUserProvider
     {
+        StaffRole Role { get; set; }
+
+        string Name { get; set; }
+
         public void ParseJwt(string token);
     }
 }
