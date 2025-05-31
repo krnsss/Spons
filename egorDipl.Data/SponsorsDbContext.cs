@@ -18,6 +18,7 @@ namespace egorDipl.Data
         public DbSet<RequestStatus> RequestStatus { get; set; }
         public DbSet<StaffRole> StaffRole { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<Notification> Notification { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
