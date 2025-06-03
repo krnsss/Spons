@@ -7,242 +7,695 @@
 <head>
     <style>
         body {
-        background-color: black;
-        color: white;
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
 
-        html {
-        background-color: #000;
-        color: #fff;
+        .container {
+            display: flex;
+            min-height: 100vh;
         }
 
-        a, .btn-link {
-        color: #007bff;
+        /* Фильтры */
+        .filters {
+            width: 300px;
+            padding: 20px;
+            background-color: #111;
+            border-right: 1px solid #333;
+            font-family: Nozhik;
+            font-size: 2em;
         }
 
-        .btn-primary {
-        color: #fff;
-        background-color: #007bff;
-        border-color: #0056b3;
+        .filter-section {
+            margin-bottom: 20px;
         }
 
-        .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-        box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #007bff;
+            .filter-section h3 {
+                color: #007bff;
+                margin-bottom: 10px;
+                font-family: Nozhik;
+                font-size: 1.2em;
+            }
+
+        .filter-option {
+            margin-bottom: 8px;
         }
 
+            .filter-option label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .filter-option select,
+            .filter-option input {
+                width: 100%;
+                padding: 8px;
+                background-color: #222;
+                color: white;
+                border: 1px solid #333;
+                border-radius: 4px;
+            }
+
+        /* Основной контент */
         .content {
-        padding-top: 1.1rem;
+            flex: 1;
+            padding: 20px;
         }
 
-        h1:focus {
-        outline: none;
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-direction: row;
         }
 
-        .valid.modified:not([type=checkbox]) {
-        outline: 1px solid #26b050;
+        .sort-dropdown {
+            position: relative;
+            display: inline-block;
+            order: 1;
+            background: 
         }
 
-        .invalid {
-        outline: 1px solid #ff0000;
+        .search-bar {
+            flex: 1;
+            display: flex;
+            position: relative;
+            order: 2;
         }
 
-        .validation-message {
-        color: #ff0000;
+        .search-bar {
+            flex: 1;
+            display: flex;
+            position: relative;
         }
 
-        table {
-        width: 100%;
-        margin-top: 1rem;
-        border-collapse: separate;
-        border-spacing: 0;
-        border-radius: 8px;
-        overflow: hidden;
+            .search-bar input {
+                flex: 1;
+                padding: 10px;
+                background-color: #222;
+                color: white;
+                border: 1px solid #333;
+                border-radius: 4px;
+                padding-right: 30px;
+            }
+
+            .search-bar .clear-btn {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: #aaa;
+                cursor: pointer;
+                font-size: 16px;
+                padding: 0 5px;
+            }
+
+                .search-bar .clear-btn:hover {
+                    color: white;
+                }
+
+        .sort-dropdown {
+            position: relative;
+            display: inline-block;
+            background: rgba(0, 123, 255, 0.3);
         }
 
-        th, td {
-        padding: 12px 15px;
-        text-align: left;
+        .sort-btn {
+            padding: 10px 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        thead {
-        background-color: #007bff;
-        color: white;
+            .sort-btn:hover {
+                background-color: #444;
+            }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #222;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            padding: 10px 0;
         }
 
-        tbody tr {
-        background-color: #222;
-        border-bottom: 1px solid #333;
+            .dropdown-content.show {
+                display: block;
+            }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        tbody tr:hover {
-        background-color: #333;
+            .dropdown-item:hover {
+                background-color: #333;
+            }
+
+            .dropdown-item.active {
+                background-color: #007bff;
+            }
+
+        .reset-btn {
+            color: #ff4444;
+            margin-top: 5px;
+            border-top: 1px solid #444;
+            padding-top: 8px;
         }
 
-        th {
-        font-size: 1.1rem;
-        font-weight: bold;
+            .reset-btn:hover {
+                color: #ff6666;
+            }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
         }
 
-        .edit, .delete {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        margin-right: 5px;
+        .event-card {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+            position: relative;
         }
 
-        .edit {
-        background-color: #28a745;
-        color: white;
+            .event-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            }
+
+            .event-card h3 {
+                color: #007bff;
+                margin-top: 0;
+                margin-bottom: 10px;
+            }
+
+        .event-detail {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
 
-        .edit:hover {
-        background-color: #218838;
+            .event-detail strong {
+                color: #aaa;
+            }
+
+        .event-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
         }
 
-        .delete {
-        background-color: #dc3545;
-        color: white;
+        .btn-request {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
 
-        .delete:hover {
-        background-color: #c82333;
+            .btn-request:hover {
+                background-color: #218838;
+            }
+
+        .admin-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            padding: 10px 15px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
         }
 
         .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
 
         .modal-content {
-        background-color: #333;
-        color: white;
-        padding: 20px;
-        border-radius: 8px;
-        width: 400px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #333;
+            color: white;
+            padding: 0;
+            border-radius: 8px;
+            width: 450px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
 
-        .modal-content h3 {
-        margin-top: 0;
+        .modal-header {
+            background-color: #222;
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid #444;
         }
+
+            .modal-header h3 {
+                margin: 0;
+                font-size: 1.3rem;
+                color: #007bff;
+            }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .readonly-field {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+
+            .readonly-field label {
+                display: block;
+                color: #aaa;
+                font-size: 0.9rem;
+                margin-bottom: 5px;
+            }
+
+            .readonly-field span {
+                display: block;
+                font-size: 1rem;
+            }
+
+        textarea {
+            width: calc(100% - 22px);
+            height: 120px;
+            padding: 10px;
+            background-color: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 4px;
+            resize: none;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+            .modal-actions button {
+                padding: 8px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: bold;
+                border: none;
+                width: 100px;
+            }
+
+            .modal-actions .save {
+                background-color: #28a745;
+                color: white;
+            }
+
+                .modal-actions .save:hover {
+                    background-color: #218838;
+                }
+
+            .modal-actions .cancel {
+                background-color: #dc3545;
+                color: white;
+            }
+
+                .modal-actions .cancel:hover {
+                    background-color: #c82333;
+                }
+                }
 
         .modal input,
         .modal select,
         .modal button {
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #007bff;
-        background-color: #222;
-        color: white;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #007bff;
+            background-color: #222;
+            color: white;
         }
 
         .modal button {
-        cursor: pointer;
-        background-color: #007bff;
-        color: white;
-        border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
         }
 
-        .modal button:hover {
-        background-color: #0056b3;
-        }
+            .modal button:hover {
+                background-color: #0056b3;
+            }
 
         .cancel {
-        background-color: #6c757d;
+            background-color: #6c757d;
         }
 
-        .cancel:hover {
-        background-color: #5a6268;
+            .cancel:hover {
+                background-color: #5a6268;
+            }
+
+        .your-event-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
 
-        button.primary {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+        .reset-filters-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #333;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        button.primary:hover {
-        background-color: #218838;
+            .reset-filters-btn:hover {
+                background-color: #444;
+            }
+
+        .admin-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
         }
 
-        h3 {
-        text-align: center;
+        .admin-btn {
+            padding: 10px 15px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
-        .blazor-error-boundary {
-        display: none;
+        .add-btn {
+            background-color: #28a745;
+            color: white;
         }
+
+        .btn-request {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+            .btn-request:hover {
+                background-color: #218838;
+            }
     </style>
 </head>
 
 <PageTitle>Мероприятия</PageTitle>
 
-@if (UserProvider.Role != null)
+<div class="container">
+    <div class="filters">
+        <h2>Фильтры</h2>
+
+        <div class="filter-section">
+            <h3>Дата</h3>
+            <div class="filter-option">
+                <label>От</label>
+                <input type="date" @bind="dateFrom" />
+            </div>
+            <div class="filter-option">
+                <label>До</label>
+                <input type="date" @bind="dateTo" />
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Статус</h3>
+            <div class="filter-option">
+                <select @bind="selectedStatusId">
+                    <option value="">Все статусы</option>
+                    @foreach (var status in statuses)
+                    {
+                        <option value="@status.Id">@status.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Организатор</h3>
+            <div class="filter-option">
+                <select @bind="selectedOrganizerId">
+                    <option value="">Все организаторы</option>
+                    @foreach (var company in companies)
+                    {
+                        <option value="@company.Id">@company.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button class="reset-filters-btn" @onclick="ResetFilters">Сбросить фильтры</button>
+    </div>
+
+    <div class="content">
+        <div class="search-container">
+            <div class="sort-dropdown">
+                <button class="sort-btn" @onclick="ToggleSortDropdown">
+                    @GetSortButtonText()
+                    <span>▼</span>
+                </button>
+                <div class="dropdown-content @(showSortDropdown ? "show" : "")">
+                    <div class="dropdown-item @(selectedSort == "date_asc" ? "active" : "")"
+                         @onclick='() => SetSort("date_asc")'>
+                        По дате (сначала ближайшие)
+                    </div>
+                    <div class="dropdown-item @(selectedSort == "date_desc" ? "active" : "")"
+                         @onclick='() => SetSort("date_desc")'>
+                        По дате (сначала дальние)
+                    </div>
+                    <div class="dropdown-item @(selectedSort == "name_asc" ? "active" : "")"
+                         @onclick='() => SetSort("name_asc")'>
+                        По названию (A-Я)
+                    </div>
+                    <div class="dropdown-item @(selectedSort == "name_desc" ? "active" : "")"
+                         @onclick='() => SetSort("name_desc")'>
+                        По названию (Я-А)
+                    </div>
+                    <div class="dropdown-item @(selectedSort == "status" ? "active" : "")"
+                         @onclick='() => SetSort("status")'>
+                        По статусу
+                    </div>
+                    @if (UserProvider.UserId != null)
+                    {
+                        <div class="dropdown-item @(selectedSort == "my" ? "active" : "")"
+                             @onclick='() => SetSort("my")'>
+                            Мои мероприятия
+                        </div>
+                    }
+                    <div class="dropdown-item reset-btn" @onclick="ResetSort">
+                        Сбросить
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Поиск мероприятий..."
+                       @bind="searchQuery" @oninput="HandleSearchInput" />
+                @if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    <button class="clear-btn" @onclick="ClearSearch">×</button>
+                }
+            </div>
+
+            
+        </div>
+
+        <div class="events-grid">
+            @foreach (var eventItem in filteredEvents)
+            {
+                <div class="event-card">
+                    @if (IsCurrentUserEvent(eventItem))
+                    {
+                        <div class="your-event-tag">Ваше</div>
+                    }
+
+                    <h3>@eventItem.Name</h3>
+
+                    <div class="event-detail">
+                        <strong>Описание: </strong> @eventItem.Description
+                    </div>
+
+                    <div class="event-detail">
+                        <strong>Организатор: </strong>
+                        @if (eventItem.OrganizerId != null)
+                        {
+                            @GetOrganizerName((int)eventItem.OrganizerId)
+                        }
+                    </div>
+
+                    <div class="event-detail">
+                        <strong>Спонсор: </strong>
+                        @if (eventItem.SponsorId != null)
+                        {
+                            @GetSponsorName((int)eventItem.SponsorId)
+                        }
+                    </div>
+
+                    <div class="event-detail">
+                        <strong>Статус: </strong>
+                        @if (eventItem.StatusId != null)
+                        {
+                            @GetStatusName((int)eventItem.StatusId)
+                        }
+                    </div>
+
+                    <div class="event-detail">
+                        <strong>Дата: </strong> @eventItem.Date.ToString("yyyy-MM-dd HH:mm")
+                    </div>
+
+                    @if (UserProvider.Role != null && UserProvider.Role.Name != "Пользователь")
+                    {
+                        <div class="event-actions">
+                            <button class="btn-request" @onclick="() => CreateRequest(eventItem.Id)">Подать заявку</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (UserProvider.Role != null && UserProvider.Role.Name != "Пользователь")
 {
-    @if (UserProvider.Role.Name != "Пользователь")
-    {
-        <button class="primary" @onclick="AddEvent">Добавить мероприятие</button>
-    }
+    <div class="admin-actions">
+        <button class="admin-btn add-btn" @onclick="AddEvent" title="Добавить мероприятие">+</button>
+    </div>
 }
 
 @if (showAddRequest)
 {
     <div class="modal">
         <div class="modal-content">
-            <h3>Заявка на сотрудничество</h3>
-
-            <div class="readonly-field">
-                <label>Мероприятие</label>
-                <span>@selectedEvent?.Name</span>
+            <div class="modal-header">
+                <h3>Заявка на сотрудничество</h3>
             </div>
 
-            <div class="readonly-field">
-                <label>Компания</label>
-                <span>@selectedEvent?.Organizer?.Name</span>
+            <div class="modal-body">
+                <div class="readonly-field">
+                    <label>Мероприятие</label>
+                    <span>@selectedEvent?.Name</span>
+                </div>
+
+                <div class="readonly-field">
+                    <label>Компания</label>
+                    <span>@selectedEvent?.Organizer?.Name</span>
+                </div>
+
+                <div class="readonly-field">
+                    <label>Дата отправки</label>
+                    <span>@DateTime.Now.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+
+                <label>Сообщение</label>
+                <textarea @bind="newRequest.RequestForCooperation.TextLetter"
+                          maxlength="500"
+                          placeholder="Введите текст заявки...">
+                    </textarea>
+                @if (submitClicked && string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter))
+                {
+                    <div class="validation-message" style="color: red;">Заполните поле</div>
+                }
+
+                <div class="modal-actions">
+                    <button class="save" @onclick="SendRequest">
+                        <i class="icon-send"></i> Отправить
+                    </button>
+                    <button class="cancel" @onclick="CloseModal">
+                        <i class="icon-cancel"></i> Отмена
+                    </button>
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-message" style="color: red; margin-top: 10px;">@errorMessage</div>
+                }
             </div>
-
-            <div class="readonly-field">
-                <label>Дата отправки</label>
-                <span>@DateTime.Now.ToString("dd.MM.yyyy HH:mm")</span>
-            </div>
-
-            <label>Сообщение</label>
-            <textarea @bind="newRequest.RequestForCooperation.TextLetter"
-            maxlength="500"
-            placeholder="Введите текст заявки..."
-            class="@(submitClicked && string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter) ? "invalid" : "")">
-            </textarea>
-            @if (submitClicked && string.IsNullOrEmpty(newRequest.RequestForCooperation.TextLetter))
-            {
-                <div class="validation-message" style="color: red;">Заполните поле</div>
-            }
-
-            <div class="modal-actions">
-                <button class="save" @onclick="SendRequest">Отправить</button>
-                <button class="cancel" @onclick="CloseModal">Отмена</button>
-            </div>
-
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="error-message" style="color: red;">@errorMessage</div>
-            }
         </div>
     </div>
 }
@@ -276,8 +729,9 @@
                 }
             </select>
 
-            @if (UserProvider.Role != null) {
-                if(UserProvider.Role.Name != "Владелец")
+            @if (UserProvider.Role != null)
+            {
+                if (UserProvider.Role.Name != "Владелец")
                 {
                     <label>Спонсор:</label>
                     <select @bind="selectedEvent.SponsorId" class="@GetFieldClass(selectedEvent.SponsorId)">
@@ -317,91 +771,16 @@
     </div>
 }
 
-@if (events == null)
+@if (UserProvider.Role != null && UserProvider.Role.Name != "Пользователь")
 {
-    <p>Загрузка...</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Название</th>
-                <th>Описание</th>
-                @if (UserProvider.Role != null)
-                {
-                    if(UserProvider.Role.Name != "Владелец")
-                    {
-                        <th>Организатор</th>
-                    }
-                }
-                <th>Спонсор</th>
-                <th>Статус</th>
-                <th>Дата</th>
-
-                @if (UserProvider.Role != null)
-                {
-                    @if (UserProvider.Role.Name != "Пользователь")
-                    {
-                        <th>Действия</th>
-                    }
-
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var eventItem in events)
-            {
-                <tr>
-                    <td>@eventItem.Name</td>
-                    <td>@eventItem.Description</td>
-                    @if (UserProvider.Role != null)
-                    {
-                        if (UserProvider.Role.Name != "Владелец")
-                        {
-                            @if (eventItem.OrganizerId != null) {
-                                <td>@GetOrganizerName((int)eventItem.OrganizerId)</td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                        }
-                    }
-                    @if (eventItem.SponsorId != null) {
-                        <td>@GetSponsorName((int)eventItem.SponsorId)</td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                    @if (eventItem.StatusId != null) {
-                        <td>@GetStatusName((int)eventItem.StatusId)</td>
-                    }
-                    else
-                    {
-                        <td></td>
-                    }
-                    <td>@eventItem.Date.ToString("yyyy-MM-dd")</td>
-                    @if (UserProvider.Role != null)
-                    {
-                        @if (UserProvider.Role.Name != "Пользователь")
-                        {
-                            <td>
-                                <button class="edit" @onclick="() => CreateRequest(eventItem.Id)">Подать заявку</button>
-                                <button class="edit" @onclick="() => EditEvent(eventItem.Id)">Редактировать</button>
-                                <button class="delete" @onclick="() => DeleteEvent(eventItem.Id)">Удалить</button>
-                            </td>
-                        }
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="admin-actions">
+        <button class="admin-btn add-btn" @onclick="AddEvent" title="Добавить мероприятие">+</button>
+    </div>
 }
 
 @code {
     private List<Event> events = new();
+    private List<Event> filteredEvents = new();
     private List<Company> companies = new();
     private List<EventStatus> statuses = new();
     private List<User> users = new();
@@ -409,12 +788,178 @@ else
     private Event selectedEvent = new();
     private bool showAddEditDialog = false;
     private bool showAddRequest = false;
+    private bool showSortDropdown = false;
+    private string selectedSort = "date_asc";
+    private DateTime? dateFrom;
+    private DateTime? dateTo;
+    private int? selectedStatusId;
+    private int? selectedOrganizerId;
+    private string searchQuery = string.Empty;
 
     private int? companyId = 0;
 
     private bool submitClicked = false;
     private string errorMessage = string.Empty;
     private RequestForCooperationRequest newRequest = new() { RequestForCooperation = new RequestForCooperation() { TextLetter = string.Empty } };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+        await LoadCompanies();
+        await LoadStatuses();
+
+        if (UserProvider.Role?.Name == "Владелец")
+        {
+            users = await Http.GetFromJsonAsync<List<User>>("api/User");
+            user = users.FirstOrDefault(u => u.UniCode == Convert.ToInt32(UserProvider.Name));
+        }
+    }
+
+    private void AddEvent()
+    {
+        selectedEvent = new Event();
+        showAddEditDialog = true;
+    }
+
+    private async Task CreateRequest(int id)
+    {
+        selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
+        showAddRequest = true;
+    }
+
+    private string GetSortButtonText()
+    {
+        return selectedSort switch
+        {
+            "date_asc" => "По дате (ближ.)",
+            "date_desc" => "По дате (дальн.)",
+            "name_asc" => "По названию (A-Я)",
+            "name_desc" => "По названию (Я-А)",
+            "status" => "По статусу",
+            "my" => "Мои мероприятия",
+            _ => "Сортировка"
+        };
+    }
+
+    private async Task LoadEvents()
+    {
+        var allEvents = await Http.GetFromJsonAsync<List<Event>>("api/Event");
+        events = allEvents ?? new List<Event>();
+        ApplyFiltersAndSort();
+    }
+
+    private async Task LoadCompanies()
+    {
+        companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
+    }
+
+    private async Task LoadStatuses()
+    {
+        statuses = await Http.GetFromJsonAsync<List<EventStatus>>("api/EventStatus");
+    }
+
+    private void ToggleSortDropdown()
+    {
+        showSortDropdown = !showSortDropdown;
+    }
+
+    private void SetSort(string sortOption)
+    {
+        selectedSort = sortOption;
+        showSortDropdown = false;
+        ApplyFiltersAndSort();
+    }
+
+    private void ResetSort()
+    {
+        selectedSort = "date_asc";
+        showSortDropdown = false;
+        ApplyFiltersAndSort();
+    }
+
+    private void ResetFilters()
+    {
+        dateFrom = null;
+        dateTo = null;
+        selectedStatusId = null;
+        selectedOrganizerId = null;
+        ApplyFiltersAndSort();
+    }
+
+    private void ClearSearch()
+    {
+        searchQuery = string.Empty;
+        ApplyFiltersAndSort();
+    }
+
+    private void HandleSearchInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value?.ToString() ?? string.Empty;
+        ApplyFiltersAndSort();
+    }
+
+    private void ApplyFiltersAndSort()
+    {
+        var filtered = events.AsEnumerable();
+
+        // Применяем фильтр по поисковой строке
+        if (!string.IsNullOrEmpty(searchQuery))
+        {
+            filtered = filtered.Where(e => e.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Применяем фильтр по дате
+        if (dateFrom.HasValue)
+        {
+            filtered = filtered.Where(e => e.Date >= dateFrom.Value);
+        }
+        if (dateTo.HasValue)
+        {
+            filtered = filtered.Where(e => e.Date <= dateTo.Value);
+        }
+
+        // Применяем фильтр по статусу
+        if (selectedStatusId.HasValue)
+        {
+            filtered = filtered.Where(e => e.StatusId == selectedStatusId.Value);
+        }
+
+        // Применяем фильтр по организатору
+        if (selectedOrganizerId.HasValue)
+        {
+            filtered = filtered.Where(e => e.OrganizerId == selectedOrganizerId.Value);
+        }
+
+        // Применяем фильтр "Мои" если выбрано
+        if (selectedSort == "my" && UserProvider.UserId != null)
+        {
+            filtered = filtered.Where(e => IsCurrentUserEvent(e));
+        }
+
+        // Применяем сортировку
+        filtered = selectedSort switch
+        {
+            "date_asc" => filtered.OrderBy(e => e.Date),
+            "date_desc" => filtered.OrderByDescending(e => e.Date),
+            "name_asc" => filtered.OrderBy(e => e.Name),
+            "name_desc" => filtered.OrderByDescending(e => e.Name),
+            "status" => filtered.OrderBy(e => e.StatusId),
+            "my" => filtered.OrderBy(e => e.Date),
+            _ => filtered.OrderBy(e => e.Date)
+        };
+
+        filteredEvents = filtered.ToList();
+        StateHasChanged();
+    }
+
+    private bool IsCurrentUserEvent(Event eventItem)
+    {
+        if (UserProvider.Role?.Name == "Владелец" && user?.CompanyId != null)
+        {
+            return eventItem.OrganizerId == user.CompanyId;
+        }
+        return false;
+    }
 
     private async Task SendRequest()
     {
@@ -455,56 +1000,18 @@ else
     private void CloseModal()
     {
         showAddRequest = false;
-
         StateHasChanged();
     }
 
     private async void ValidateAndSave()
     {
         submitClicked = true;
-
         await SaveEvent();
     }
 
     private string GetFieldClass(object fieldValue)
     {
         return submitClicked && string.IsNullOrEmpty(fieldValue?.ToString()) ? "invalid" : "";
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEvents();
-        await LoadCompanies();
-        await LoadStatuses();
-    }
-
-    private async Task LoadEvents()
-    {
-        events = await Http.GetFromJsonAsync<List<Event>>("api/Event");
-
-        if (UserProvider.Role != null)
-        {
-            if(UserProvider.Role.Name == "Владелец")
-            {
-                users = await Http.GetFromJsonAsync<List<User>>("api/User");
-                user = users.FirstOrDefault(user => user.UniCode == Convert.ToInt32(UserProvider.Name));
-                companyId = user.CompanyId;
-
-                events = events.Where(e => e.OrganizerId == companyId).ToList();
-            }
-        }
-
-        StateHasChanged();
-    }
-
-    private async Task LoadCompanies()
-    {
-        companies = await Http.GetFromJsonAsync<List<Company>>("api/Company");
-    }
-
-    private async Task LoadStatuses()
-    {
-        statuses = await Http.GetFromJsonAsync<List<EventStatus>>("api/EventStatus");
     }
 
     private string GetOrganizerName(int organizerId)
@@ -525,22 +1032,10 @@ else
         return status?.Name ?? "Неизвестно";
     }
 
-    private void AddEvent()
-    {
-        selectedEvent = new Event();
-        showAddEditDialog = true;
-    }
-
     private async Task EditEvent(int id)
     {
         selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
         showAddEditDialog = true;
-    }
-    
-    private async Task CreateRequest(int id)
-    {
-        selectedEvent = await Http.GetFromJsonAsync<Event>($"api/Event/{id}");
-        showAddRequest = true;
     }
 
     private async Task SaveEvent()

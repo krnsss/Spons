@@ -4,110 +4,181 @@
 @rendermode InteractiveServer
 
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="icon" href="~/images/SponsIcon.png" type="image/png">
     <style>
-        .top-row {
-        background-color: #1a1a1a;
-        padding: 10px 0;
-        display: flex;
-        justify-content: center;
+        .top-navbar {
+            background-color: #1a1a1a;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .nav-scrollable {
-        display: flex;
-        justify-content: center;
-        background-color: #1a1a1a;
-        padding: 10px 0;
+        .nav-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
         }
 
-        .nav {
-        display: flex;
-        gap: 20px;
+        .logo-container {
+            margin-right: 40px;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+             
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
         }
 
         .nav-link {
-        color: white;
-        text-decoration: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        transition: all 0.3s ease-in-out;
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
         .nav-link:hover {
-        background-color: white;
-        color: black;
+            background-color: #333;
         }
 
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 40px;
+        }
+
+        .profile-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .logout-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .notification-badge {
+            background-color: red;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/merops" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Мероприятия
-            </NavLink>
+<div class="top-navbar">
+    <div class="nav-container">
+        <!-- Логотип слева -->
+        <div class="logo-container">
+            <img src="https://ibb.co/NgQt197W" alt="Logo" class="logo" />
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/companies">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Компании
-            </NavLink>
-        </div>
+        <!-- Основное меню по центру -->
+        <div class="nav-menu">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="/merops" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Мероприятия
+                </NavLink>
+            </div>
 
-        @if (UserProvider.Role != null)
-        {
-            @if (UserProvider.Role.Name != "Пользователь")
+            <div class="nav-item">
+                <NavLink class="nav-link" href="/companies">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Компании
+                </NavLink>
+            </div>
+
+            @if (UserProvider.Role != null)
             {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/users">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Пользователи
-                    </NavLink>
-                </div>                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/orders">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Запросы
-                    </NavLink>
-                </div>
+                @if (UserProvider.Role.Name != "Пользователь")
+                {
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="/users">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Пользователи
+                        </NavLink>
+                    </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="/orders">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Запросы
+                        </NavLink>
+                    </div>
 
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/coops">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Сотрудничества
-                    </NavLink>
-                </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="/coops">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Сотрудничества
+                        </NavLink>
+                    </div>
+                }
             }
-        }
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/profile">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Профиль
-            </NavLink>
-        </div>
-
-        @if (UserProvider.Role != null)
-        {
-            if (UserProvider.Role.Name != "Владелец")
+            @if (UserProvider.Role != null)
             {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/notifications">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>
-                        Уведомление
-
-                        @if (notificationCount > 0)
-                        {
-                            <span style="background-color: red; color: white; border-radius: 10px; padding: 2px 6px; margin-left: 5px; font-size: 0.8rem;">
-                                @notificationCount
-                            </span>
-                        }
-                    </NavLink>
-                </div>
+                if (UserProvider.Role.Name != "Владелец")
+                {
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="/notifications">
+                            <span class="bi bi-bell-fill" aria-hidden="true"></span>
+                            Уведомления
+                            @if (notificationCount > 0)
+                            {
+                                <span class="notification-badge">
+                                    @notificationCount
+                                </span>
+                            }
+                        </NavLink>
+                    </div>
+                }
             }
-        }
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true" style="color: darkred;"></span> Выйти
-            </NavLink>
         </div>
-    </nav>
+
+        <!-- Кнопки профиля и выхода справа -->
+        <div class="user-actions">
+            <NavLink class="profile-link" href="/profile">
+                <span class="bi bi-person-fill" aria-hidden="true"></span> Профиль
+            </NavLink>
+            <button class="logout-btn" onclick="location.href='/'">
+                <img src="/images/door-icon.png" alt="Выход" class="logout-icon" />
+            </button>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -115,6 +186,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        notificationCount = (await Http.GetFromJsonAsync<List<Notification>>("api/Notification")).Count(n => n.CompanyId == UserProvider.CompanyId && n.NotificationStatus == Data.Enums.NotificationStatus.Sended);
+        if (UserProvider.Role != null && UserProvider.Role.Name != "Владелец")
+        {
+            notificationCount = (await Http.GetFromJsonAsync<List<Notification>>("api/Notification"))
+                .Count(n => n.CompanyId == UserProvider.CompanyId && n.NotificationStatus == Data.Enums.NotificationStatus.Sended);
+        }
     }
 }
