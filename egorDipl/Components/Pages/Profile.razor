@@ -307,6 +307,20 @@ else
     </div>
 }
 
+
+<script>
+    window.getCookie = function (key) {
+        var value = "";
+        document.cookie.split(';').forEach(function (cookie) {
+            var parts = cookie.split('=');
+            if (parts.length === 2 && parts[0].trim() === key) {
+                value = parts[1].trim();
+            }
+        });
+        return value;
+    };
+</script>
+
 @code {
     private User? user;
     private User editUser = new();
@@ -314,6 +328,29 @@ else
     private bool isLoading = true;
     private bool showEditModal = false;
     private bool isCompanyEdit = false;
+
+    private bool HasAccessToken { get; set; }
+
+    private async Task<string> GetCookieValue(string key)
+    {
+        return await JsRuntime.InvokeAsync<string>("getCookie", key);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await GetCookieValue("AccessToken");
+            var tokenValue = JsonSerializer.Deserialize<TokenDto>(result);
+
+            if (!result.IsNullOrEmpty())
+                UserProvider.ParseJwt(tokenValue.AccessToken);
+
+            HasAccessToken = !string.IsNullOrEmpty(result);
+
+            StateHasChanged();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

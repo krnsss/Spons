@@ -21,7 +21,7 @@ namespace egorDipl.Data.Models
             {
                 var claims = jsonToken.Claims;
 
-                var nameClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                var nameClaim = claims.FirstOrDefault(c => c.Type == "UniCode");
 
                 if (nameClaim != null)
                     Name = nameClaim.Value;
