@@ -10,199 +10,416 @@
 <head>
     <style>
         body {
-            background-color: black;
+            background-color: #121212;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
         }
 
         .profile-container {
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 20px;
-            max-width: 900px;
-            width: 100%;
+            justify-content: space-between;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .profile-section {
-            background-color: #222;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: left;
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            min-width: 0;
         }
 
-            .profile-section h4 {
-                margin-top: 0;
-                color: #fff;
-            }
-
-            .profile-section p {
-                margin: 5px 0;
-                color: #bbb;
-            }
-
-            .profile-section strong {
-                color: #fff;
-            }
-
-        .button-container {
-            margin-top: 15px;
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
         }
 
-        .primary-btn {
-            background-color: #28a745;
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #bbbbbb;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #ffffff;
+            word-break: break-word;
+        }
+
+        .edit-btn {
+            background-color: #1976d2;
             color: white;
             border: none;
             padding: 10px 20px;
-            font-size: 1rem;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: background-color 0.3s;
             width: 100%;
-            text-align: center;
         }
 
-            .primary-btn:hover {
-                background-color: #218838;
+            .edit-btn:hover {
+                background-color: #1565c0;
             }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #252525;
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #4fc3f7;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bbbbbb;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .save-btn {
+            background-color: #388e3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+            .save-btn:hover {
+                background-color: #2e7d32;
+            }
+
+        .cancel-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+            .cancel-btn:hover {
+                background-color: #b71c1c;
+            }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 
 <PageTitle>Профиль пользователя</PageTitle>
 
-@* @if (user == null)
+@if (isLoading)
 {
-    <p>Загрузка...</p>
+    <div class="loading">Загрузка данных...</div>
+}
+else if (user == null)
+{
+    <div class="loading">Ошибка загрузки данных пользователя</div>
 }
 else
-{ *@
+{
     <div class="profile-container">
-        <div class="user-info">
-            <h4>Личные данные</h4>
-            @* <p><strong>Фамилия:</strong> @user.Surname</p>
-            <p><strong>Имя:</strong> @user.Name</p>
-            <p><strong>Отчество:</strong> @user.Patronymic</p>
-            <p><strong>Должность:</strong> @user.Post</p>
-            <p><strong>Роль:</strong> @(user.Role?.Name ?? "Нет роли")</p>
-            <p><strong>Уникальный код:</strong> @user.UniCode</p>
-            <button class="edit" @onclick="EditUser">Редактировать</button> *@
-            <p><strong>Фамилия:</strong>Карунас</p>
-            <p><strong>Имя:</strong>Егор</p>
-            <p><strong>Отчество:</strong>Артёмович</p>
-            <p><strong>Должность:</strong>Директор</p>
-            <p><strong>Роль:</strong>Владелец</p>
-            <p><strong>Уникальный код:</strong>777777</p>
-            <button class="edit" @onclick="EditUser">Редактировать</button>
+        <!-- Личные данные -->
+        <div class="profile-section">
+            <h3 class="section-title">Личные данные</h3>
+            
+            <div class="info-item">
+                <span class="info-label">Фамилия</span>
+                <div class="info-value">@user.Surname</div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Имя</span>
+                <div class="info-value">@user.Name</div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Отчество</span>
+                <div class="info-value">@(string.IsNullOrEmpty(user.Patronymic) ? "Не указано" : user.Patronymic)</div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Должность</span>
+                <div class="info-value">@user.Post</div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Роль</span>
+                <div class="info-value">@(user.Role?.Name ?? "Не назначена")</div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Уникальный код</span>
+                <div class="info-value">@user.UniCode</div>
+            </div>
+            
+            <button class="edit-btn" @onclick="() => OpenEditModal(false)">Изменить личные данные</button>
         </div>
 
-        @* @if (user.Company != null)
-        { *@
-            <div class="company-info">
-                <h4>Компания</h4>
-                <p><strong>Название:</strong>KIT++</p>
-                <p><strong>Адрес:</strong>Казань, ул. Б.Красная, д.55</p>
-                <p><strong>Число событий:</strong>789</p>
-                <p><strong>Отзывы:</strong>512</p>
-                <p><strong>Рейтинг:</strong>5.0</p>
-                <p><strong>Описание:</strong>Студсовет!</p>
-            </div>
-        @* }
-        else
-        {
-            <p>Компания не назначена.</p>
-        } *@
-    </div>
-@* } *@
-
-@if (showEditDialog)
-{
-    <div class="modal">
-        <div class="modal-content">
-            <h3>Редактировать профиль</h3>
-
-            <label>Фамилия:</label>
-            <input @bind="user.Surname" />
-
-            <label>Имя:</label>
-            <input @bind="user.Name" />
-
-            <label>Отчество:</label>
-            <input @bind="user.Patronymic" />
-
-            <label>Должность:</label>
-            <input @bind="user.Post" />
-
-            <button class="save" @onclick="SaveUser">Сохранить</button>
-            <button class="cancel" @onclick="Cancel">Отмена</button>
+        <!-- Данные компании -->
+        <div class="profile-section">
+            <h3 class="section-title">Данные компании</h3>
+            
+            @if (user.Company != null)
+            {
+                <div class="info-item">
+                    <span class="info-label">Название</span>
+                    <div class="info-value">@user.Company.Name</div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Адрес</span>
+                    <div class="info-value">@user.Company.Address</div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Описание</span>
+                    <div class="info-value">@(string.IsNullOrEmpty(user.Company.Description) ? "Не указано" : user.Company.Description)</div>
+                </div>
+                
+                @if (user.Role?.Name == "Admin" || user.Role?.Name == "Owner")
+                {
+                    <button class="edit-btn" @onclick="() => OpenEditModal(true)">Изменить данные компании</button>
+                }
+            }
+            else
+            {
+                <div class="info-item">
+                    <div class="info-value">Компания не назначена</div>
+                </div>
+            }
         </div>
     </div>
 }
 
-<script>
-    window.getCookie = function (key) {
-        var value = "";
-        document.cookie.split(';').forEach(function (cookie) {
-            var parts = cookie.split('=');
-            if (parts.length === 2 && parts[0].trim() === key) {
-                value = parts[1].trim();
+@if (showEditModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">@(isCompanyEdit ? "Редактирование компании" : "Редактирование профиля")</h3>
+            
+            @if (!isCompanyEdit)
+            {
+                <div class="form-group">
+                    <label class="form-label">Фамилия</label>
+                    <input class="form-input" @bind="editUser.Surname" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Имя</label>
+                    <input class="form-input" @bind="editUser.Name" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Отчество</label>
+                    <input class="form-input" @bind="editUser.Patronymic" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Должность</label>
+                    <input class="form-input" @bind="editUser.Post" />
+                </div>
             }
-        });
-        return value;
-    };
-
-    window.deleteCookie = function (key) {
-        document.cookie = key + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    };
-</script>
+            else if (user?.Company != null)
+            {
+                <div class="form-group">
+                    <label class="form-label">Название компании</label>
+                    <input class="form-input" @bind="editCompany.Name" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Адрес</label>
+                    <input class="form-input" @bind="editCompany.Address" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-input" rows="3" @bind="editCompany.Description"></textarea>
+                </div>
+            }
+            
+            <div class="button-group">
+                <button class="save-btn" @onclick="SaveChanges">Сохранить</button>
+                <button class="cancel-btn" @onclick="CloseEditModal">Отмена</button>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private User? user;
-    private bool showEditDialog = false;
+    private User editUser = new();
+    private Company editCompany = new();
+    private bool isLoading = true;
+    private bool showEditModal = false;
+    private bool isCompanyEdit = false;
 
-    private void EditUser()
+    protected override async Task OnInitializedAsync()
     {
-        showEditDialog = true;
-    }
-
-    private async Task SaveUser()
-    {
-        await Http.PutAsJsonAsync("api/User/me", user);
-        showEditDialog = false;
-    }
-
-    private void Cancel()
-    {
-        showEditDialog = false;
-    }
-
-    private bool HasAccessToken { get; set; }
-
-    private async Task<string> GetCookieValue(string key)
-    {
-        return await JsRuntime.InvokeAsync<string>("getCookie", key);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        try
         {
-            var result = await GetCookieValue("AccessToken");
-            var tokenValue = JsonSerializer.Deserialize<TokenDto>(result);
+            // Загрузка данных пользователя
+            user = await Http.GetFromJsonAsync<User>("api/User/me");
+            
+            if (user != null)
+            {
+                // Копируем данные для редактирования
+                editUser = new User
+                {
+                    Surname = user.Surname,
+                    Name = user.Name,
+                    Patronymic = user.Patronymic,
+                    Post = user.Post
+                };
 
-            if (!result.IsNullOrEmpty())
-                UserProvider.ParseJwt(tokenValue.AccessToken);
+                if (user.Company != null)
+                {
+                    editCompany = new Company
+                    {
+                        Name = user.Company.Name,
+                        Address = user.Company.Address,
+                        Description = user.Company.Description
+                    };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
 
-            HasAccessToken = !string.IsNullOrEmpty(result);
+    private void OpenEditModal(bool companyEdit)
+    {
+        isCompanyEdit = companyEdit;
+        showEditModal = true;
+    }
 
+    private void CloseEditModal()
+    {
+        showEditModal = false;
+        
+        // Сброс изменений при отмене
+        if (user != null)
+        {
+            editUser.Surname = user.Surname;
+            editUser.Name = user.Name;
+            editUser.Patronymic = user.Patronymic;
+            editUser.Post = user.Post;
+            
+            if (user.Company != null)
+            {
+                editCompany.Name = user.Company.Name;
+                editCompany.Address = user.Company.Address;
+                editCompany.Description = user.Company.Description;
+            }
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        try
+        {
+            if (!isCompanyEdit)
+            {
+                // Обновление данных пользователя
+                var response = await Http.PutAsJsonAsync("api/User/me", editUser);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    if (user != null)
+                    {
+                        user.Surname = editUser.Surname;
+                        user.Name = editUser.Name;
+                        user.Patronymic = editUser.Patronymic;
+                        user.Post = editUser.Post;
+                    }
+                }
+            }
+            else if (user?.Company != null)
+            {
+                // Обновление данных компании
+                var response = await Http.PutAsJsonAsync($"api/Company/{user.Company.Id}", editCompany);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    user.Company.Name = editCompany.Name;
+                    user.Company.Address = editCompany.Address;
+                    user.Company.Description = editCompany.Description;
+                }
+            }
+            
+            showEditModal = false;
             StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при сохранении: {ex.Message}");
         }
     }
 }

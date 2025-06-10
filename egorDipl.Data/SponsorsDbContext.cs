@@ -19,6 +19,9 @@ namespace egorDipl.Data
         public DbSet<StaffRole> StaffRole { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Notification> Notification { get; set; }
+        public DbSet<EventTag> EventTags { get; set; }
+        public DbSet<Tags> Tags { get; set; }
+        public DbSet<TagsCategory> TagCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +56,25 @@ namespace egorDipl.Data
 
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Id);
+
+            modelBuilder.Entity<EventTag>()
+        .HasKey(et => et.Id);
+
+            modelBuilder.Entity<EventTag>()
+                .HasOne(et => et.Event)
+                .WithMany()
+                .HasForeignKey(et => et.EventId);
+
+            modelBuilder.Entity<EventTag>()
+                .HasOne(et => et.Tag)
+                .WithMany(t => t.EventTags)
+                .HasForeignKey(et => et.TagId);
+
+            // Конфигурация для Tag
+            modelBuilder.Entity<Tags>()
+                .HasOne(t => t.Category)
+                .WithMany(tc => tc.Tags)
+                .HasForeignKey(t => t.CategoryId);
         }
     }
 }

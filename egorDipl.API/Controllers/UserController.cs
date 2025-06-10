@@ -21,18 +21,6 @@ public class UserController : ControllerBase
         return await _context.User.ToListAsync();
     }
 
-    // Получить пользователя по ID
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
-    {
-        var user = await _context.User.FindAsync(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-        return user;
-    }
-
     // Авторизация пользователя по UniCode и Password
     [HttpPost("Login")]
     public async Task<ActionResult<User>> Login([FromBody] LoginModel loginData)
@@ -137,5 +125,32 @@ public class UserController : ControllerBase
 
         Console.WriteLine("Пользователь удален");
         return NoContent();
+    }
+
+    // UserController.cs
+    [HttpGet("company/{companyId}")]
+    public async Task<ActionResult<List<User>>> GetUsersByCompany(int companyId)
+    {
+        return await _context.User
+            .Include(u => u.Company)
+            .Include(u => u.Role)
+            .Where(u => u.CompanyId == companyId)
+            .ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUser(int id)
+    {
+        var user = await _context.User
+            .Include(u => u.Company)
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return user;
     }
 }

@@ -25,6 +25,7 @@ namespace egorDipl.Data.Models
 
                 if (nameClaim != null)
                     Name = nameClaim.Value;
+                
                 var roleClaim = claims.FirstOrDefault(c => c.Type == "Role");
 
                 if (roleClaim != null)

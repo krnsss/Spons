@@ -9,6 +9,7 @@
     <base href="/" />
     <link rel="icon" href="~/images/SponsIcon.png" type="image/png">
     <style>
+        /* Ваши стили остаются без изменений */
         .top-navbar {
             background-color: #1a1a1a;
             padding: 10px 20px;
@@ -107,34 +108,35 @@
 
 <div class="top-navbar">
     <div class="nav-container">
-        <!-- Логотип слева -->
         <div class="logo-container">
-            <img src="https://ibb.co/NgQt197W" alt="Logo" class="logo" />
+            <label style="font-family: Nozhik; color:white;">SPONS</label>
         </div>
 
-        <!-- Основное меню по центру -->
-        <div class="nav-menu">
-            <div class="nav-item">
-                <NavLink class="nav-link" href="/merops" Match="NavLinkMatch.All">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Мероприятия
-                </NavLink>
-            </div>
+        @if (UserProvider?.Role != null)
+        {
+            <div class="nav-menu">
+                <!-- Общие пункты меню для всех ролей -->
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="/merops" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Мероприятия
+                    </NavLink>
+                </div>
 
-            <div class="nav-item">
-                <NavLink class="nav-link" href="/companies">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Компании
-                </NavLink>
-            </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="/companiess">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Компании
+                    </NavLink>
+                </div>
 
-            @if (UserProvider.Role != null)
-            {
-                @if (UserProvider.Role.Name != "Пользователь")
+                <!-- Пункты меню для Модератора -->
+                @if (UserProvider.Role.Name == "Модератор") 
                 {
                     <div class="nav-item">
                         <NavLink class="nav-link" href="/users">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Пользователи
                         </NavLink>
                     </div>
+
                     <div class="nav-item">
                         <NavLink class="nav-link" href="/orders">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Запросы
@@ -147,29 +149,34 @@
                         </NavLink>
                     </div>
                 }
-            }
 
-            @if (UserProvider.Role != null)
-            {
-                if (UserProvider.Role.Name != "Владелец")
+                <!-- Пункты меню для Администратора и Владельца -->
+                @if (UserProvider.Role.Name == "Администратор" || UserProvider.Role.Name == "Владелец")
                 {
                     <div class="nav-item">
-                        <NavLink class="nav-link" href="/notifications">
-                            <span class="bi bi-bell-fill" aria-hidden="true"></span>
-                            Уведомления
-                            @if (notificationCount > 0)
-                            {
-                                <span class="notification-badge">
-                                    @notificationCount
-                                </span>
-                            }
+                        <NavLink class="nav-link" href="/staff">
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> 
+                            @(UserProvider.Role.Name == "Владелец" ? "Мои сотрудники" : "Сотрудники")
                         </NavLink>
                     </div>
                 }
-            }
-        </div>
 
-        <!-- Кнопки профиля и выхода справа -->
+                <!-- Общий пункт меню для уведомлений -->
+                <div class="nav-item">
+                    <NavLink class="nav-link" href="/notifications">
+                        <span class="bi bi-bell-fill" aria-hidden="true"></span>
+                        Уведомления
+                        @if (notificationCount > 0)
+                        {
+                            <span class="notification-badge">
+                                @notificationCount
+                            </span>
+                        }
+                    </NavLink>
+                </div>
+            </div>
+        }
+
         <div class="user-actions">
             <NavLink class="profile-link" href="/profile">
                 <span class="bi bi-person-fill" aria-hidden="true"></span> Профиль
@@ -186,10 +193,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (UserProvider.Role != null && UserProvider.Role.Name != "Владелец")
+        if (UserProvider?.Role != null && UserProvider.CompanyId > 0)
         {
-            notificationCount = (await Http.GetFromJsonAsync<List<Notification>>("api/Notification"))
-                .Count(n => n.CompanyId == UserProvider.CompanyId && n.NotificationStatus == Data.Enums.NotificationStatus.Sended);
+            try 
+            {
+                var notifications = await Http.GetFromJsonAsync<List<Notification>>("api/Notification");
+                notificationCount = notifications?
+                    .Count(n => n.CompanyId == UserProvider.CompanyId && n.NotificationStatus == Data.Enums.NotificationStatus.Sended) ?? 0;
+            }
+            catch
+            {
+                notificationCount = 0;
+            }
         }
     }
 }
